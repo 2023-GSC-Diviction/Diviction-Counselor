@@ -1,14 +1,24 @@
 import 'dart:io';
 
-import 'package:diviction_counselor/component/custom_round_button.dart';
-import 'package:diviction_counselor/component/profile_image.dart';
-import '../component/title_header.dart';
+import 'package:diviction_counselor/widget/custom_round_button.dart';
+import 'package:diviction_counselor/widget/profile_image.dart';
+import 'package:diviction_counselor/model/counselor.dart';
+import 'package:diviction_counselor/model/network_result.dart';
+import 'package:diviction_counselor/network/dio_client.dart';
+import 'package:diviction_counselor/screen/login_screen.dart';
+import 'package:diviction_counselor/widget/title_header.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  final String id;
+  final String password;
+  const ProfileScreen({
+    Key? key,
+    required this.id,
+    required this.password,
+  }) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -24,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String path = 'asset/image/DefaultProfileImage.png';
 
   bool isGenderchoosed = false;
-  String userGender = 'Male';
+  String userGender = 'MALE';
 
   TextEditingController textEditingController_name = TextEditingController();
   TextEditingController textEditingController_birth = TextEditingController();
@@ -68,12 +78,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 textEditingController: textEditingController_birth,
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.015),
-              // _DatePicker(
-              //   onDateTimeChanged: onDateTimeChanged,
-              //   selectedDate: selectedDate,
-              //   defaultDate: defaultDate,
-              // ),
-              // SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+              _DatePicker(
+                onDateTimeChanged: onDateTimeChanged,
+                selectedDate: selectedDate,
+                defaultDate: defaultDate,
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.015),
               _CustomInputField(
                 HintText: 'Street Address',
                 inputIcons: Icons.home_outlined,
@@ -101,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       selectedDate = value;
       textEditingController_birth.text =
-          '${value.year}년 ${value.month}월 ${value.day}일';
+          '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
     });
   }
 
@@ -121,7 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   onGenderChoosedMale() {
     setState(() {
       isGenderchoosed = true;
-      userGender = 'Male';
+      userGender = 'MALE';
     });
     print(userGender);
   }
@@ -129,19 +139,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
   onGenderChoosedFemale() {
     setState(() {
       isGenderchoosed = true;
-      userGender = 'Female';
+      userGender = 'FEMALE';
     });
     print(userGender);
   }
 
-  onPressedSignupButton() {
+  onPressedSignupButton() async {
     print('프로필 완성 버튼 눌림');
-    print('프로필 이미지 경로 : ${path}');
+    print('email : $widget.id');
+    print('password : $widget.password');
     print('이름 : ${textEditingController_name.text}');
     print('생년월일 : ${textEditingController_birth.text}');
     print('주소 : ${textEditingController_address.text}');
     print('성별 : ${userGender}');
+    print('프로필 이미지 경로 : ${path}');
+
     // API Call
+    String result = await AccountSignup();
+    if(result == "200") {
+      print("회원가입 성공, 로그인 페이지로 이동하기");
+      // 회원가입 성공! 이것도 넣어야 할까요.... 흠
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => LoginScreen())
+      );
+    }
+    else {
+      print('회원가입 - 오류 발생 $result');
+    }
+  }
+
+  Future<String> AccountSignup() async {
+    var response = await DioClient().post(
+      'http://15.164.100.67:8080/auth/signUp/counselor',
+      {
+        'email': widget.id,
+        'password': widget.password,
+        'name': textEditingController_name.text,
+        'address': textEditingController_address.text,
+        'birth': textEditingController_birth.text,
+        'gender': 'MAIL', // Male / Female로 구현했는데 백엔드에서 MAIL이 아니면 error 떠서 수정 요청할 계획임
+        'profile_img_url': path,
+        'confirm': false,
+      },
+      false,
+    );
+
+    if (response.result == Result.success) {
+      return '200';
+    } else {
+      return response.toString();
+    }
   }
 }
 
@@ -279,7 +326,7 @@ class GenderButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             // 메인 컬러 - 배경색
             primary:
-                (userGender == gender) ? Colors.blue[300] : Color(0xFFEEEEEE),
+                (userGender[0] == gender[0]) ? Colors.blue[300] : Color(0xFFEEEEEE),
             // 서브 컬러 - 글자 및 글자 및 애니메이션 색상
             onPrimary: Colors.black,
             shape: RoundedRectangleBorder(

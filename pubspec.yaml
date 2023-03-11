@@ -37,7 +37,11 @@ dependencies:
   cupertino_icons: ^1.0.2
   image_picker: ^0.8.6+3
   scroll_date_picker: ^3.6.1
-  # flutter_statusbarcolor_ns: ^0.5.0
+  dio: ^5.0.0
+  flutter_riverpod: ^2.2.0
+  intl: ^0.18.0
+  # 토큰 관리
+  flutter_secure_storage: ^4.2.0
 
 dev_dependencies:
   flutter_test:

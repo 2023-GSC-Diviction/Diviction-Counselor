@@ -1,5 +1,5 @@
-import 'package:diviction_counselor/component/custom_textfiled.dart';
-import 'package:diviction_counselor/component/profile_image.dart';
+import 'package:diviction_counselor/widget/custom_textfiled.dart';
+import 'package:diviction_counselor/widget/profile_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 

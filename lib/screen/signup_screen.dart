@@ -1,8 +1,7 @@
-import 'package:diviction_counselor/component/custom_round_button.dart';
+import 'package:diviction_counselor/widget/custom_round_button.dart';
 import 'package:diviction_counselor/screen/signup_profile_screen.dart';
+import 'package:diviction_counselor/widget/title_header.dart';
 import 'package:flutter/material.dart';
-
-import '../component/title_header.dart';
 
 final underlineTextStyle = TextStyle(
   color: Color(0xFFC3C3C3),
@@ -91,7 +90,10 @@ class _SignupScreenState extends State<SignupScreen> {
     // API Call
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (BuildContext context) => ProfileScreen(),
+        builder: (BuildContext context) => ProfileScreen(
+          id : textEditingController_id.text,
+          password : textEditingController_pw.text,
+        ),
       ),
     );
   }

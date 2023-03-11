@@ -1,9 +1,11 @@
-import 'package:diviction_counselor/component/title_header.dart';
-import 'package:diviction_counselor/screen/bottom_navigation/PrifileTab/profile_screen.dart';
+import 'package:diviction_counselor/widget/title_header.dart';
+import 'package:diviction_counselor/model/network_result.dart';
+import 'package:diviction_counselor/network/dio_client.dart';
 import 'package:diviction_counselor/screen/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../component/custom_round_button.dart';
+import 'package:diviction_counselor/widget/custom_round_button.dart';
 
 final underlineTextStyle = TextStyle(
   color: Color(0xFFC3C3C3),
@@ -75,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  onPressedLoginButton() {
+  onPressedLoginButton() async {
     print('로그인 버튼 눌림');
     print('아이디 : ${textEditingController_id.text}');
     print('비밀번호 : ${textEditingController_pw.text}');
@@ -83,10 +85,39 @@ class _LoginScreenState extends State<LoginScreen> {
     // id, pw 검증하는 API Call
 
     // 로그인 성공
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => ProfileScreen())
-    );
+    // API Call
+    String result = await AccountLogin();
+    if(result == "200") {
+      print("로그인 성공, 바텀 네비게이션 가진 스크린으로 이동");
+      // Navigator.of(context).push(
+      //     MaterialPageRoute(builder: (_) => HomeScreen()) // 리버팟 적용된 HomeScreen 만들기
+      // );
+    }
     // 로그인 실패
+    else {
+      print('로그인 - 오류 발생 $result');
+    }
+  }
+
+  Future<String> AccountLogin() async {
+    var response = await DioClient().post(
+      'http://15.164.100.67:8080/auth/signIn/counselor',
+      {
+        'email': textEditingController_id.text,
+        'password': textEditingController_pw.text,
+        'authority': 'ROLE_COUNSELOR', // 혜진님 : ROLE_USER
+      },
+      false,
+    );
+
+    if (response.result == Result.success) {
+      // 여기서 회원 정보 가져오고 UI 구성에 필요한 값들 미리 저장?
+      await storage.write(key: 'accessToken', value: 'acToken');
+      await storage.write(key: 'refreshToken', value: 'refToken');
+      return '200';
+    } else {
+      return response.toString();
+    }
   }
 }
 
