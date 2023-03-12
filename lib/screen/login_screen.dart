@@ -1,3 +1,4 @@
+import 'package:diviction_counselor/screen/bottom_nav.dart';
 import 'package:diviction_counselor/widget/title_header.dart';
 import 'package:diviction_counselor/model/network_result.dart';
 import 'package:diviction_counselor/network/dio_client.dart';
@@ -89,9 +90,9 @@ class _LoginScreenState extends State<LoginScreen> {
     String result = await AccountLogin();
     if(result == "200") {
       print("로그인 성공, 바텀 네비게이션 가진 스크린으로 이동");
-      // Navigator.of(context).push(
-      //     MaterialPageRoute(builder: (_) => HomeScreen()) // 리버팟 적용된 HomeScreen 만들기
-      // );
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => BottomNavigation()) // 리버팟 적용된 HomeScreen 만들기
+      );
     }
     // 로그인 실패
     else {
