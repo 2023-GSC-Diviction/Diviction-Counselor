@@ -95,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onGenderChoosedFemale: onGenderChoosedFemale,
                 userGender: userGender,
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.17),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               CustomRoundButton(
                   title: 'Profile completed!',
                   onPressed: onPressedSignupButton),
@@ -170,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<String> AccountSignup() async {
     var response = await DioClient().post(
-      'http://15.164.100.67:8080/auth/signUp/counselor',
+      '$baseUrl/auth/signUp/member',
       {
         'email': widget.id,
         'password': widget.password,

@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<String> AccountLogin() async {
     var response = await DioClient().post(
-      'http://15.164.100.67:8080/auth/signIn/counsleor', // path counselor가 맞음 오타있음
+      '$baseUrl/auth/signIn/counsleor', // path counselor가 맞음 오타있음
       {
         'email': textEditingController_id.text,
         'password': textEditingController_pw.text,
