@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<String> AccountLogin() async {
     var response = await DioClient().post(
-      'http://15.164.100.67:8080/auth/signIn/counselor',
+      'http://15.164.100.67:8080/auth/signIn/counsleor', // path counselor가 맞음 오타있음
       {
         'email': textEditingController_id.text,
         'password': textEditingController_pw.text,
@@ -112,8 +112,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (response.result == Result.success) {
       // 여기서 회원 정보 가져오고 UI 구성에 필요한 값들 미리 저장?
-      await storage.write(key: 'accessToken', value: 'acToken');
-      await storage.write(key: 'refreshToken', value: 'refToken');
+      storage.write(key: 'accessToken', value: response.response['accessToken']);
+      storage.write(key: 'refreshToken', value: response.response['refreshToken']);
+      final AT = await storage.read(key: 'accessToken');
+      final RT = await storage.read(key: 'refreshToken');
+      print('accessToken : $AT');
+      print('refreshToken : $RT');
       return '200';
     } else {
       return response.toString();
