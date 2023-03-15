@@ -14,15 +14,21 @@ class DioClient {
 
   String? _acToken;
   String? _refToken;
+  int? _ID;
   final Dio _dio = Dio();
 
   DioClient._internal() {
     _getToken();
+    _getId();
   }
 
   _getToken() async {
     _acToken = await storage.read(key: 'accessToken');
     _refToken = await storage.read(key: 'refreshToken');
+  }
+
+  _getId() async {
+    _ID = (await storage.read(key: 'ID')) as int?;
   }
 
   _tokenRefresh(String acToken, String refToken) async {
@@ -55,9 +61,6 @@ class DioClient {
   // 처음 회원가입 로그인 시에는 options 값이 들어갈 수 없으므로 useToken을 통해서 options값 선택하게 함
   Future<NetWorkResult> post(String url, dynamic data, bool useToken) async {
     print(json.encode(data));
-    print('${(json.encode(data)).runtimeType}');
-    print(_dio.options);
-
     try {
       Response response = await _dio.post(
         url,

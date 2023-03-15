@@ -14,6 +14,7 @@ import 'package:scroll_date_picker/scroll_date_picker.dart';
 class ProfileScreen extends StatefulWidget {
   final String id;
   final String password;
+
   const ProfileScreen({
     Key? key,
     required this.id,
@@ -170,14 +171,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<String> AccountSignup() async {
     var response = await DioClient().post(
-      '$baseUrl/auth/signUp/member',
+      '$baseUrl/auth/signUp/counselor',
       {
+        'id': 1,
         'email': widget.id,
         'password': widget.password,
         'name': textEditingController_name.text,
         'address': textEditingController_address.text,
         'birth': textEditingController_birth.text,
-        'gender': 'MAIL', // Male / Female로 구현했는데 백엔드에서 MAIL이 아니면 error 떠서 수정 요청할 계획임
+        'gender': userGender,
         'profile_img_url': path,
         'confirm': false,
       },

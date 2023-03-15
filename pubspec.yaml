@@ -42,6 +42,8 @@ dependencies:
   intl: ^0.18.0
   # 토큰 관리
   flutter_secure_storage: ^4.2.0
+  # 보안값 관리
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
