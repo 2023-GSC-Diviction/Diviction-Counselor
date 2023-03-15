@@ -7,27 +7,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 final loginStateProvider =
-FutureProvider.autoDispose((ref) => AuthService().isLogin());
+    FutureProvider.autoDispose((ref) => AuthService().isLogin());
 
 class SplashScreen extends ConsumerWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(authProvider.notifier).isLogin();
     final isLogin = ref.watch(loginStateProvider);
     String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-    Future.delayed(const Duration(milliseconds: 1000), () async {
-      isLogin.when(
-        data: (value) {
-          if (value == true) {
-            BottomNavigation();
-          } else if (value == false) {
-            LoginScreen();
-          }
-        },
-        loading: () {},
-        error: (error, stackTrace) {},
-      );
+    Future.delayed(const Duration(milliseconds: 1500), () async {
+      print('isLogin.value : ${isLogin.value}');
+      if(isLogin.value == null)
+        return;
+      if (isLogin.value!) {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const BottomNavigation()));
+      } else {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const LoginScreen()));
+      }
     });
 
     return Container(

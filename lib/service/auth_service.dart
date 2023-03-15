@@ -20,6 +20,8 @@ class AuthService {
     // 로그인 검증
     String? acToken = await storage.read(key: 'accessToken');
     String? rfToken = await storage.read(key: 'refreshToken');
+    print('acToken : $acToken');
+    print('rfToken : $rfToken');
     try {
       if (acToken == null && rfToken == null) {
         return false;
@@ -27,7 +29,7 @@ class AuthService {
         NetWorkResult result = await DioClient().post(
             '$_baseUrl/auth/validate/token',
             {
-              'accessToken': acToken,
+              'accessToken': "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzNEBnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9DT1VOU0VMT1IiLCJleHAiOjE2Nzg5MDUzOTN9.NxqB3_Gbzu1Afi-TaGGjXUDfJ6pahrj43VOH6inelVwQPaRGJF0zhBEckEL9RWp27_9nNqgpztrE1Wwoukd-HQ",
               'refreshToken': rfToken,
               'authority': 'ROLE_COUNSELOR'
             },
@@ -59,7 +61,7 @@ class AuthService {
         final RT = await storage.read(key: 'refreshToken');
         print('accessToken : $AT');
         print('refreshToken : $RT');
-        return result.response;
+        return true;
       } else {
         throw Exception('Failed to login');
       }

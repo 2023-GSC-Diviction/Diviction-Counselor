@@ -20,9 +20,13 @@ class AuthState extends StateNotifier<SignState> {
     try {
       var result = await AuthService().isLogin();
       if (result) {
+        print('자동로그인 성공');
         state = SignState.success;
+        return;
       } else {
+        print('자동로그인 실패');
         state = SignState.fail;
+        return;
       }
     } catch (e) {
       print(e);
@@ -33,10 +37,15 @@ class AuthState extends StateNotifier<SignState> {
   Future signIn(String email, String password) async {
     try {
       var result = await AuthService().signIn(email, password);
+
       if (result) {
+        print('로그인 성공');
         state = SignState.success;
+        return;
       } else {
+        print('로그인 실패');
         state = SignState.fail;
+        return;
       }
     } catch (e) {
       print(e);

@@ -37,7 +37,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    // authProvider의 상태를 무효화시키는 역할
+    // authProvider의 상태를 무효화시키는 역할, Provider의 상태 변화를 다른 Consumer들이 반영
     ref.invalidate(authProvider);
   }
 
@@ -48,8 +48,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       switch (isLogin) {
         case SignState.success:
-          toMain();
+        // Provider의 상태 변화를 다른 Consumer들이 반영
           ref.invalidate(authProvider);
+          toMain();
           break;
         case SignState.fail:
           showSnackbar();

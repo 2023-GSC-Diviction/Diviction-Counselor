@@ -25,6 +25,8 @@ class DioClient {
   _getToken() async {
     _acToken = await storage.read(key: 'accessToken');
     _refToken = await storage.read(key: 'refreshToken');
+    print('_getToken() _acToken : $_acToken');
+    print('_getToken() _refToken : $_refToken');
     _id = (await storage.read(key: 'id')) as int?;
   }
 
@@ -62,6 +64,7 @@ class DioClient {
             HttpHeaders.contentTypeHeader: 'application/json',
             'Content-Type': 'application/json',
           }));
+      print('response.statusCode : ${response.statusCode}, message : ${response.statusMessage}');
       if (response.statusCode == 200) {
         _checkToken(response.headers);
         return NetWorkResult(result: Result.success, response: response.data);
@@ -104,7 +107,7 @@ class DioClient {
               'Content-Type': 'application/json',
             },
           ));
-
+      print('response.statusCode : ${response.statusCode}, message : ${response.statusMessage}');
       if (response.statusCode == 200) {
         _checkToken(response.headers);
         return NetWorkResult(result: Result.success, response: response.data);
@@ -120,8 +123,10 @@ class DioClient {
       }
     } on DioError catch (e) {
       if (e.response != null) {
+        print(e.response.toString());
         return NetWorkResult(result: Result.fail, response: e.response);
       } else {
+        print(e.response.toString());
         return NetWorkResult(result: Result.fail, response: e);
       }
     }
