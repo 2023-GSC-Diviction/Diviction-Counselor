@@ -29,7 +29,7 @@ class AuthService {
             {
               'accessToken': acToken,
               'refreshToken': rfToken,
-              'authority': 'ROLE_USER'
+              'authority': 'ROLE_COUNSELOR'
             },
             false);
         if (result.result == Result.success) {

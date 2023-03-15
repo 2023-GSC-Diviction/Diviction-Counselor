@@ -16,6 +16,20 @@ class AuthState extends StateNotifier<SignState> {
     super.state = value;
   }
 
+  Future isLogin() async {
+    try {
+      var result = await AuthService().isLogin();
+      if (result) {
+        state = SignState.success;
+      } else {
+        state = SignState.fail;
+      }
+    } catch (e) {
+      print(e);
+      state = SignState.fail;
+    }
+  }
+
   Future signIn(String email, String password) async {
     try {
       var result = await AuthService().signIn(email, password);

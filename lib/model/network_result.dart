@@ -11,4 +11,5 @@ class NetWorkResult {
 enum Result {
   fail,
   success,
+  tokenExpired,
 }

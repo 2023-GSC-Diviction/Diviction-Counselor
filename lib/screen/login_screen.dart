@@ -10,6 +10,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:diviction_counselor/widget/custom_round_button.dart';
 
+// StateNotifierProvider는 StateNotifier를 이용하여 상태 관리를 하는 클래스
+//
 final authProvider = StateNotifierProvider.autoDispose<AuthState, SignState>(
     (ref) => AuthState());
 
@@ -35,6 +37,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    // authProvider의 상태를 무효화시키는 역할
     ref.invalidate(authProvider);
   }
 

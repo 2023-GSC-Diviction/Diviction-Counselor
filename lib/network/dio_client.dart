@@ -14,7 +14,7 @@ class DioClient {
 
   String? _acToken;
   String? _refToken;
-  int? _ID;
+  int? _id;
   final Dio _dio = Dio();
 
   DioClient._internal() {
@@ -25,10 +25,18 @@ class DioClient {
   _getToken() async {
     _acToken = await storage.read(key: 'accessToken');
     _refToken = await storage.read(key: 'refreshToken');
+    _id = (await storage.read(key: 'id')) as int?;
+  }
+
+  _checkToken(Headers headers) {
+    if (headers.value('accessToken') != null) {
+      _tokenRefresh(
+          headers.value('accessToken')!, headers.value('refreshToken')!);
+    }
   }
 
   _getId() async {
-    _ID = (await storage.read(key: 'ID')) as int?;
+
   }
 
   _tokenRefresh(String acToken, String refToken) async {
@@ -38,45 +46,33 @@ class DioClient {
     _refToken = refToken;
   }
 
-  Future<NetWorkResult> get(String url, Map<String, dynamic>? parameter) async {
+  Future<NetWorkResult> get(
+      String url, Map<String, dynamic>? parameter, bool useToken) async {
     try {
-      Response response = await _dio.get(
-        url,
-        queryParameters: parameter,
-      );
-      if (response.statusCode == 200) {
-        return NetWorkResult(result: Result.success, response: response.data);
-      } else {
-        return NetWorkResult(result: Result.fail);
-      }
-    } on DioError catch (e) {
-      if (e.response != null) {
-        return NetWorkResult(result: Result.fail, response: e.response);
-      } else {
-        return NetWorkResult(result: Result.fail, response: e);
-      }
-    }
-  }
-
-  // 처음 회원가입 로그인 시에는 options 값이 들어갈 수 없으므로 useToken을 통해서 options값 선택하게 함
-  Future<NetWorkResult> post(String url, dynamic data, bool useToken) async {
-    print(json.encode(data));
-    try {
-      Response response = await _dio.post(
-        url,
-        data: json.encode(data),
-        options: useToken ? Options(
-          headers: {
-            HttpHeaders.authorizationHeader: 'Bearer $_acToken',
+      Response response = await _dio.get(url,
+          queryParameters: parameter,
+          options: useToken
+              ? Options(headers: {
+            HttpHeaders.authorizationHeader: _acToken,
             HttpHeaders.contentTypeHeader: 'application/json',
             'Content-Type': 'application/json',
             'RT': _refToken
-          },
-        ) : null,
-      );
+          })
+              : Options(headers: {
+            HttpHeaders.contentTypeHeader: 'application/json',
+            'Content-Type': 'application/json',
+          }));
       if (response.statusCode == 200) {
+        _checkToken(response.headers);
         return NetWorkResult(result: Result.success, response: response.data);
+      } else if (response.statusCode == 401) {
+        if (response.headers.value('CODE') == 'RTE') {
+          return NetWorkResult(result: Result.tokenExpired);
+        } else {
+          return NetWorkResult(result: Result.fail);
+        }
       } else {
+        _checkToken(response.headers);
         return NetWorkResult(result: Result.fail);
       }
     } on DioError catch (e) {
@@ -88,22 +84,38 @@ class DioClient {
     }
   }
 
-  /** 앱 시작시 AT 토큰을 검증*/
-  Future<NetWorkResult> postTokenDaildate(String url) async {
-    final at = storage.read(key: 'accessToken');
-    print('_acToken : $at');
+  Future<NetWorkResult> post(String url, dynamic data, bool useToken) async {
     try {
-      Response response = await _dio.post(
-        url,
-        options: Options(
-          headers: {
-            "token" :'Bearer $at',
-          }
-        )
-      );
+      Response response = await _dio.post(url,
+          data: json.encode(data),
+          options: useToken
+              ? Options(
+            headers: {
+              HttpHeaders.authorizationHeader: _acToken,
+              HttpHeaders.contentTypeHeader: 'application/json',
+              'Content-Type': 'application/json',
+              'RT':
+              _refToken, // 이거는 토큰이 만료되었을 때, 새로운 토큰을 받아오기 위해 필요한 헤더입니다.
+            },
+          )
+              : Options(
+            headers: {
+              HttpHeaders.contentTypeHeader: 'application/json',
+              'Content-Type': 'application/json',
+            },
+          ));
+
       if (response.statusCode == 200) {
+        _checkToken(response.headers);
         return NetWorkResult(result: Result.success, response: response.data);
+      } else if (response.statusCode == 401) {
+        if (response.headers.value('CODE') == 'RTE') {
+          return NetWorkResult(result: Result.tokenExpired);
+        } else {
+          return NetWorkResult(result: Result.fail);
+        }
       } else {
+        _checkToken(response.headers);
         return NetWorkResult(result: Result.fail);
       }
     } on DioError catch (e) {
