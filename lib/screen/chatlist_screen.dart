@@ -59,54 +59,79 @@ class MemberListScreenState extends ConsumerState<MemberListScreen> {
                           builder: (context, snapshot) {
                             return ListView.builder(
                                 itemBuilder: ((context, index) {
-                                  return InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ChatScreen(
-                                                      chatroomId: snapshot
-                                                          .data![index]
-                                                          .chatRoomId,
-                                                    )));
-                                      },
-                                      child: Container(
-                                        height: 70,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 50,
-                                              height: 50,
+                                  return Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ChatScreen(
+                                                            chatroomId: snapshot
+                                                                .data![index]
+                                                                .chatRoomId,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              height: 70,
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 20),
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    width: 50,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.grey,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50)),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                          snapshot.data![index]
+                                                              .otherName,
+                                                          style: TextStyles
+                                                              .chatNicknameTextStyle),
+                                                      const SizedBox(height: 5),
+                                                      Text(
+                                                          snapshot.data![index]
+                                                              .lastMessage,
+                                                          style: TextStyles
+                                                              .chatNotMeBubbleTextStyle)
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            )),
+                                        GestureDetector(
+                                            onTap: () {},
+                                            child: Container(
+                                              width: 100,
+                                              height: 30,
                                               decoration: BoxDecoration(
-                                                  color: Colors.grey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          50)),
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                    snapshot
-                                                        .data![index].otherName,
+                                                color: Colors.blue,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: const Center(
+                                                child: Text('accept',
                                                     style: TextStyles
-                                                        .chatNicknameTextStyle),
-                                                const SizedBox(height: 5),
-                                                Text(
-                                                    snapshot.data![index]
-                                                        .lastMessage,
-                                                    style: TextStyles
-                                                        .chatNotMeBubbleTextStyle)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ));
+                                                        .blueBottonTextStyle),
+                                              ),
+                                            ))
+                                      ]);
                                 }),
                                 itemCount: data.length);
                           }));
