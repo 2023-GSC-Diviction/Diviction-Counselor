@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:diviction_counselor/model/counselor.dart';
 import 'package:diviction_counselor/model/network_result.dart';
 import 'package:diviction_counselor/network/dio_client.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -29,7 +31,8 @@ class AuthService {
         NetWorkResult result = await DioClient().post(
             '$_baseUrl/auth/validate/token',
             {
-              'accessToken': "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzNEBnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9DT1VOU0VMT1IiLCJleHAiOjE2Nzg5MDUzOTN9.NxqB3_Gbzu1Afi-TaGGjXUDfJ6pahrj43VOH6inelVwQPaRGJF0zhBEckEL9RWp27_9nNqgpztrE1Wwoukd-HQ",
+              'accessToken':
+                  "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzNEBnbWFpbC5jb20iLCJyb2xlIjoiUk9MRV9DT1VOU0VMT1IiLCJleHAiOjE2Nzg5MDUzOTN9.NxqB3_Gbzu1Afi-TaGGjXUDfJ6pahrj43VOH6inelVwQPaRGJF0zhBEckEL9RWp27_9nNqgpztrE1Wwoukd-HQ",
               'refreshToken': rfToken,
               'authority': 'ROLE_COUNSELOR'
             },
@@ -52,15 +55,15 @@ class AuthService {
           {'email': email, 'password': password, 'authority': 'ROLE_COUNSELOR'},
           false);
       if (result.result == Result.success) {
-        storage.write(
-            key: 'accessToken', value: result.response['accessToken']);
-        storage.write(
-            key: 'refreshToken', value: result.response['refreshToken']);
+        final token = result.response['token'];
+        storage.write(key: 'accessToken', value: token['accessToken']);
+        storage.write(key: 'refreshToken', value: token['refreshToken']);
         // 값 검증
         final AT = await storage.read(key: 'accessToken');
         final RT = await storage.read(key: 'refreshToken');
         print('accessToken : $AT');
         print('refreshToken : $RT');
+        getUser(result.response['email']);
         return true;
       } else {
         throw Exception('Failed to login');
@@ -70,10 +73,27 @@ class AuthService {
     }
   }
 
-  Future<bool> signUp(User user) async {
+  Future getUser(String email) async {
     try {
       NetWorkResult result = await DioClient()
-          .post('$_baseUrl/auth/signUp/member', user.toJson(), false);
+          .get('$_baseUrl/counselor/email/$email', {'user_email': email}, true);
+      if (result.result == Result.success) {
+        Counselor counselor = Counselor.fromJson(result.response);
+        counselor.savePreference(counselor);
+      } else {
+        throw Exception('Failed to getUser');
+      }
+    } catch (e) {
+      throw Exception('Failed to getUser');
+    }
+  }
+
+  Future<bool> signUp(Counselor counselor) async {
+    try {
+      // final Dio _dio = Dio();
+      // _dio.post(path, data: data, options: options)
+      NetWorkResult result = await DioClient()
+          .post('$_baseUrl/auth/signUp/member', counselor.toJson(), false);
       print(result);
       if (result.result == Result.success) {
         return true;

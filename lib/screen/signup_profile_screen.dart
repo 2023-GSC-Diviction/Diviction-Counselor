@@ -157,14 +157,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     // API Call
     String result = await AccountSignup();
-    if(result == "200") {
+    if (result == "200") {
       print("회원가입 성공, 로그인 페이지로 이동하기");
       // 회원가입 성공! 이것도 넣어야 할까요.... 흠
-      Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => LoginScreen())
-      );
-    }
-    else {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => LoginScreen()));
+    } else {
       print('회원가입 - 오류 발생 $result');
     }
   }
@@ -180,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'address': textEditingController_address.text,
         'birth': textEditingController_birth.text,
         'gender': userGender,
-        'profile_img_url': path,
+        // 'profile_img_url': path,
         'confirm': false,
       },
       false,
@@ -327,8 +325,9 @@ class GenderButton extends StatelessWidget {
           onPressed: onGenderChoosed,
           style: ElevatedButton.styleFrom(
             // 메인 컬러 - 배경색
-            primary:
-                (userGender[0] == gender[0]) ? Colors.blue[300] : Color(0xFFEEEEEE),
+            primary: (userGender[0] == gender[0])
+                ? Colors.blue[300]
+                : Color(0xFFEEEEEE),
             // 서브 컬러 - 글자 및 글자 및 애니메이션 색상
             onPrimary: Colors.black,
             shape: RoundedRectangleBorder(

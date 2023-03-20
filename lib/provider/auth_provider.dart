@@ -1,3 +1,4 @@
+import 'package:diviction_counselor/model/counselor.dart';
 import 'package:diviction_counselor/service/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -53,9 +54,9 @@ class AuthState extends StateNotifier<SignState> {
     }
   }
 
-  Future signUp(User user) async {
+  Future signUp(Counselor counselor) async {
     try {
-      bool result = await AuthService().signUp(user);
+      bool result = await AuthService().signUp(counselor);
       if (result) {
         state = SignState.success;
       } else {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../provider/bottom_nav_provider.dart';
+import '../service/chat_service.dart';
 import 'chatlist_screen.dart';
 
 final bottomNavProvider =

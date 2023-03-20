@@ -1,12 +1,13 @@
+import 'package:diviction_counselor/model/chat.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/style.dart';
 import '../service/chat_service.dart';
+import 'chat_screen.dart';
 
-final counselorListProvider =
-    StreamProvider.autoDispose((ref) => ChatService().getChatListData());
+final chatProvider = FutureProvider((ref) => ChatService().getChatList());
 
 class MemberListScreen extends ConsumerStatefulWidget {
   const MemberListScreen({super.key});
@@ -17,8 +18,29 @@ class MemberListScreen extends ConsumerStatefulWidget {
 
 class MemberListScreenState extends ConsumerState<MemberListScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // getList();
+  }
+
+  // getList() async {
+  //   final list = ChatService().getChatList();
+  //   chatList = await list;
+  // }
+
+  // List<MyChat> chatList = [];
+
+  @override
   Widget build(BuildContext context) {
-    final chatList = ref.watch(counselorListProvider);
+    final chat = ref.watch(chatProvider);
+
+    // return chat.when(data: (data) {
+    //   if(data.isNotEmpty){
+
+    //   }
+    //   return
+    // },)
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
@@ -26,40 +48,70 @@ class MemberListScreenState extends ConsumerState<MemberListScreen> {
         children: [
           const Text('My Chat', style: TextStyles.titleTextStyle),
           const SizedBox(height: 20),
-          chatList.when(
-              data: (item) => item.isEmpty
-                  ? const Center(child: Text('empty'))
-                  : ListView.builder(
-                      itemBuilder: ((context, index) {
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 20),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(50)),
-                              ),
-                              const SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(item[index].otherName,
-                                      style: TextStyles.chatNicknameTextStyle),
-                                  const SizedBox(height: 5),
-                                  Text(item[index].lastMessage,
-                                      style:
-                                          TextStyles.chatNotMeBubbleTextStyle)
-                                ],
-                              )
-                            ],
-                          ),
-                        );
-                      }),
-                      itemCount: item.length,
-                    ),
+          chat.when(
+              data: (data) {
+                if (data.isEmpty) {
+                  return Center(child: Text('empty'));
+                } else {
+                  return Expanded(
+                      child: StreamBuilder(
+                          stream: ChatService().getChatListData(),
+                          builder: (context, snapshot) {
+                            return ListView.builder(
+                                itemBuilder: ((context, index) {
+                                  return InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ChatScreen(
+                                                      chatroomId: snapshot
+                                                          .data![index]
+                                                          .chatRoomId,
+                                                    )));
+                                      },
+                                      child: Container(
+                                        height: 70,
+                                        margin:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.grey,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50)),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    snapshot
+                                                        .data![index].otherName,
+                                                    style: TextStyles
+                                                        .chatNicknameTextStyle),
+                                                const SizedBox(height: 5),
+                                                Text(
+                                                    snapshot.data![index]
+                                                        .lastMessage,
+                                                    style: TextStyles
+                                                        .chatNotMeBubbleTextStyle)
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ));
+                                }),
+                                itemCount: data.length);
+                          }));
+                }
+              },
               error: (e, st) =>
                   Expanded(child: Center(child: Text('Error: $e'))),
               loading: () => const Expanded(
