@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../provider/bottom_nav_provider.dart';
+import 'chatlist_screen.dart';
 
 final bottomNavProvider =
-StateNotifierProvider<BottomNavState, int>((ref) => BottomNavState());
+    StateNotifierProvider<BottomNavState, int>((ref) => BottomNavState());
 
 class BottomNavigation extends ConsumerWidget {
   const BottomNavigation({Key? key}) : super(key: key);
@@ -19,11 +20,8 @@ class BottomNavigation extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: [
-          ProfileScreen(),
-          ProfileScreen(),
-          ProfileScreen()
-        ].elementAt(currentPage),
+        child: [MemberListScreen(), ProfileScreen(), ProfileScreen()]
+            .elementAt(currentPage),
       ),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
