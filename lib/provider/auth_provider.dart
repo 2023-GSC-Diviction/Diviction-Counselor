@@ -3,7 +3,7 @@ import 'package:diviction_counselor/service/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
 enum SignState { proceeding, success, fail }
@@ -54,17 +54,26 @@ class AuthState extends StateNotifier<SignState> {
     }
   }
 
-  Future signUp(Counselor counselor) async {
+  Future signUp(Map<String, dynamic> counselor) async {
     try {
       bool result = await AuthService().signUp(counselor);
       if (result) {
+        print('회원가입 성공');
         state = SignState.success;
       } else {
+        print('회원가입 실패');
         state = SignState.fail;
       }
     } catch (e) {
       print(e);
       state = SignState.fail;
+    }
+  }
+
+  saveData(String email) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getString('email') == null || prefs.getString('email') != email) {
+      AuthService().getCounselor(email);
     }
   }
 }

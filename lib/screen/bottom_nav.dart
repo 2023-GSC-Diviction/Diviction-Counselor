@@ -1,4 +1,6 @@
 import 'package:diviction_counselor/screen/bottom_navigation/ProfileTab/profile_screen.dart';
+import 'package:diviction_counselor/screen/matchlist_screen.dart';
+import 'package:diviction_counselor/screen/memo_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,43 +23,17 @@ class BottomNavigation extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: [MemberListScreen(), ProfileScreen(), ProfileScreen()]
+        child: [MatchListScreen(), MemberListScreen(), MemoScreen(),  ProfileScreen()]
             .elementAt(currentPage),
       ),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home,
-                  color: unSelected,
-                ),
-                activeIcon: Icon(
-                  Icons.home,
-                  color: selected,
-                ),
-                label: 'Home'),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.chat,
-                  color: unSelected,
-                ),
-                activeIcon: Icon(
-                  Icons.chat,
-                  color: selected,
-                ),
-                label: 'Counselor'),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.account_circle_rounded,
-                  color: unSelected,
-                ),
-                activeIcon: Icon(
-                  Icons.account_circle_rounded,
-                  color: selected,
-                ),
-                label: 'MyPage'),
+          items: <BottomNavigationBarItem>[
+            _BottomNavigationBarItems(Icons.home, 'Home', selected, unSelected),
+            _BottomNavigationBarItems(Icons.chat, 'Counselor', selected, unSelected),
+            _BottomNavigationBarItems(Icons.chat, 'Counselor', selected, unSelected),
+            _BottomNavigationBarItems(Icons.account_circle_rounded, 'MyPage', selected, unSelected),
           ],
           currentIndex: currentPage,
           selectedItemColor: selected,
@@ -66,5 +42,18 @@ class BottomNavigation extends ConsumerWidget {
             ref.read(bottomNavProvider.notifier).state = index;
           }),
     );
+  }
+
+  BottomNavigationBarItem _BottomNavigationBarItems(IconData icon, String label, Color selected, Color unSelected) {
+    return BottomNavigationBarItem(
+        icon: Icon(
+          icon,
+          color: unSelected,
+        ),
+        activeIcon: Icon(
+          icon,
+          color: selected,
+        ),
+        label: label);
   }
 }

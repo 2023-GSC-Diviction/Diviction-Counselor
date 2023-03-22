@@ -8,60 +8,44 @@ import '../model/user.dart';
 
 const storage = fss.FlutterSecureStorage();
 
-class AuthService {
-  static final AuthService _authService = AuthService._internal();
-  factory AuthService() {
-    return _authService;
+class MatchService {
+  static final MatchService _matchService = MatchService._internal();
+  factory MatchService() {
+    return _matchService;
   }
-  AuthService._internal();
+  MatchService._internal();
 
   final String? _baseUrl = dotenv.env['BASE_URL'];
 
-  Future<bool> isLogin() async {
-    String? acToken = await storage.read(key: 'accessToken');
-    String? rfToken = await storage.read(key: 'refreshToken');
+  Future<List<dynamic>> getMatchList(int counselorId) async {
     try {
-      if (acToken == null && rfToken == null) {
-        return false;
+      NetWorkResult result = await DioClient().get(
+          '$_baseUrl/counselor/match/list/{id}?id=$counselorId', {}, false);
+      if (result.result == Result.success) {
+        return result.response;
       } else {
-        NetWorkResult result = await DioClient().post(
-            '$_baseUrl/auth/validate/token',
-            {
-              'accessToken': acToken,
-              'refreshToken': rfToken,
-              'authority': 'ROLE_USER'
-            },
-            false);
-        if (result.result == Result.success) {
-          return true;
-        } else {
-          return false;
-        }
+        throw Exception('Failed to getMatchList');
       }
     } catch (e) {
-      return false;
+      throw Exception('Failed to getMatchList');
     }
   }
 
-  Future<bool> signIn(String email, String password) async {
-    try {
-      NetWorkResult result = await DioClient().post(
-          '$_baseUrl/auth/signIn/counselor',
-          {'email': email, 'password': password, 'authority': 'ROLE_COUNSELOR'},
-          false);
-      if (result.result == Result.success) {
-        final token = result.response['token'];
-        storage.write(key: 'accessToken', value: token['accessToken']);
-        storage.write(key: 'refreshToken', value: token['refreshToken']);
-        getCounselor(email);
-        return true;
-      } else {
-        throw Exception('Failed to login');
-      }
-    } catch (e) {
-      throw Exception('Failed to login');
-    }
-  }
+  // get 테스트용 정상 작동함
+  // Future<NetWorkResult> getMatchList() async {
+  //   try {
+  //     NetWorkResult result = await DioClient()
+  //         .get('$_baseUrl/audit/list/member/7', {}, false);
+  //     print(result.response);
+  //     if (result.result == Result.success) {
+  //       return NetWorkResult(result: Result.success, response: result.response);
+  //     } else {
+  //       return NetWorkResult(result: Result.fail);
+  //     }
+  //   } catch (e) {
+  //     return NetWorkResult(result: Result.fail, response: e);
+  //   }
+  // }
 
   Future<bool> signUp(Map<String, dynamic> counselor) async {
     try {

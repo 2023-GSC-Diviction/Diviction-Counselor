@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:diviction_counselor/service/auth_service.dart';
 import 'package:diviction_counselor/widget/custom_round_button.dart';
 import 'package:diviction_counselor/widget/profile_image.dart';
 import 'package:diviction_counselor/model/counselor.dart';
@@ -8,24 +9,30 @@ import 'package:diviction_counselor/network/dio_client.dart';
 import 'package:diviction_counselor/screen/login_screen.dart';
 import 'package:diviction_counselor/widget/title_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 
-class ProfileScreen extends StatefulWidget {
+enum SignupState { proceeding, success, fail, apifail }
+
+final SignupProvider =
+    StateProvider<SignupState>((ref) => SignupState.proceeding);
+
+class SignUpProfileScreen extends ConsumerStatefulWidget {
   final String id;
   final String password;
 
-  const ProfileScreen({
+  const SignUpProfileScreen({
     Key? key,
     required this.id,
     required this.password,
   }) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<SignUpProfileScreen> {
   DateTime selectedDate = DateTime.now();
   DateTime defaultDate = DateTime(
       DateTime.now().year - 19, DateTime.now().month, DateTime.now().day);
@@ -43,6 +50,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final idCheckState = ref.watch(SignupProvider);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      switch (idCheckState) {
+        case SignupState.success:
+          showSnackbar('Sign up success');
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => LoginScreen()));
+          break;
+        case SignupState.fail:
+          showSnackbar('Sign up failed');
+          break;
+        case SignupState.apifail:
+          showSnackbar('Sign up api failed');
+          break;
+        default:
+      }
+    });
+
     // GestureDetector를 최상단으로 두고, requestFocus(FocusNode())를 통해서 키보드를 닫을 수 있음.
     return GestureDetector(
       onTap: () {
@@ -108,6 +134,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
   onDateTimeChanged(DateTime value) {
     setState(() {
       selectedDate = value;
@@ -155,39 +189,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     print('성별 : ${userGender}');
     print('프로필 이미지 경로 : ${path}');
 
-    // API Call
-    String result = await AccountSignup();
-    if (result == "200") {
-      print("회원가입 성공, 로그인 페이지로 이동하기");
-      // 회원가입 성공! 이것도 넣어야 할까요.... 흠
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (_) => LoginScreen()));
-    } else {
-      print('회원가입 - 오류 발생 $result');
-    }
-  }
-
-  Future<String> AccountSignup() async {
-    var response = await DioClient().post(
-      '$baseUrl/auth/signUp/counselor',
-      {
-        'id': 1,
-        'email': widget.id,
-        'password': widget.password,
-        'name': textEditingController_name.text,
-        'address': textEditingController_address.text,
-        'birth': textEditingController_birth.text,
-        'gender': userGender,
-        // 'profile_img_url': path,
-        'confirm': false,
-      },
-      false,
-    );
-
-    if (response.result == Result.success) {
-      return '200';
-    } else {
-      return response.toString();
+    Map<String, dynamic> counselor = {
+      'email': widget.id,
+      'password': widget.password,
+      'name': textEditingController_name.text,
+      'birth': textEditingController_birth.text,
+      'address': textEditingController_address.text,
+      'gneder': userGender,
+      'confirm': false,
+    };
+    try {
+      bool result = await AuthService().signUp(counselor);
+      if (result) {
+        ref.read(SignupProvider.notifier).state = SignupState.success;
+      } else {
+        ref.read(SignupProvider.notifier).state = SignupState.fail;
+      }
+    } catch (e) {
+      ref.read(SignupProvider.notifier).state = SignupState.apifail;
     }
   }
 }

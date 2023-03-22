@@ -55,7 +55,7 @@ android {
         applicationId "com.diviction.diviction_counselor"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 18 // flutter_secure_storage 플러그인으로 인해 18 설정
+        minSdkVersion 19 // cloud_firestore  플러그인으로 인해 19 설정
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

@@ -8,7 +8,7 @@ class Counselor {
   String birth;
   String address;
   String gender;
-  String? profileUrl;
+  String? profile_img_url;
   bool confirm;
 
   Counselor(
@@ -19,7 +19,7 @@ class Counselor {
       required this.address,
       required this.birth,
       required this.gender,
-      this.profileUrl,
+      this.profile_img_url,
       required this.confirm});
 
   factory Counselor.fromJson(Map<String, dynamic> json) {
@@ -31,7 +31,7 @@ class Counselor {
         address: json['address'],
         birth: json['birth'],
         gender: json['gender'],
-        profileUrl: json['profile_img_url'],
+        profile_img_url: json['profile_img_url'],
         confirm: json['confirm']);
   }
 
@@ -43,7 +43,7 @@ class Counselor {
         'address': address,
         'gender': gender,
         'birth': birth,
-        'profile_img_url': profileUrl,
+        'profile_img_url': profile_img_url,
         'confirm': confirm
       };
 
@@ -55,9 +55,9 @@ class Counselor {
     prefs.setString('name', counselor.name);
     prefs.setString('address', counselor.address);
     prefs.setString('birth', counselor.birth);
-    counselor.profileUrl == null
+    counselor.profile_img_url == null
         ? prefs.setString('profileUrl', '')
-        : prefs.setString('profileUrl', counselor.profileUrl!);
+        : prefs.setString('profileUrl', counselor.profile_img_url!);
     prefs.setBool('confirm', counselor.confirm);
   }
 }

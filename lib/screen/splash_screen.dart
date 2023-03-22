@@ -21,8 +21,8 @@ class SplashScreen extends ConsumerWidget {
       print('isLogin.value : ${isLogin.value}');
       if (isLogin.value == null) return;
       if (isLogin.value!) {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const BottomNavigation()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const BottomNavigation()));
       } else {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => const LoginScreen()));

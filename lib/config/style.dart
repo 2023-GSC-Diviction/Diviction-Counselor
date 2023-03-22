@@ -38,9 +38,9 @@ class TextStyles {
       fontSize: 14,
       color: Color.fromRGBO(255, 255, 255, 1));
   static const TextStyle chatNicknameTextStyle =
-  TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600);
+      TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600);
   static const TextStyle chatNotMeBubbleTextStyle =
-  TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w400);
+      TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w400);
   static const TextStyle splashTitleTextStyle = TextStyle(
       decoration: TextDecoration.none,
       color: Colors.black54,
@@ -62,7 +62,7 @@ class TextStyles {
       letterSpacing: 0.02,
       fontWeight: FontWeight.w500);
   static const TextStyle dialogConfirmTextStyle =
-  TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16);
+      TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16);
   static const TextStyle dialogCancelTextStyle = TextStyle(
       color: Colors.black54, fontWeight: FontWeight.w700, fontSize: 16);
   static const TextStyle commentBtnTextStyle = TextStyle(
@@ -71,7 +71,7 @@ class TextStyles {
       color: Color.fromRGBO(51, 51, 51, 1),
       fontWeight: FontWeight.w400);
   static const TextStyle descriptionTextStyle =
-  TextStyle(color: Color.fromRGBO(153, 153, 153, 1), fontSize: 14);
+      TextStyle(color: Color.fromRGBO(153, 153, 153, 1), fontSize: 14);
 
   static const underlineTextStyle = TextStyle(
     color: Color(0xFFC3C3C3),
