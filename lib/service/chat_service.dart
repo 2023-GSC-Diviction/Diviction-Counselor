@@ -106,14 +106,33 @@ class ChatService {
   }
 
   savaLastMessage(String id, String chatRoomId, Message message) async {
-    final snapshot = await _firestore.collection('users').doc(id).get();
-    if (snapshot.exists) {
-      final chat = MyChat.fromJson(snapshot.data()![chatRoomId]);
-      chat.lastMessage = message.content;
-      _firestore
-          .collection('users')
-          .doc(id)
-          .update({chatRoomId: chat.toJson()});
+    try {
+      final snapshot = await _firestore.collection('users').doc(id).get();
+      if (snapshot.exists) {
+        final chat = MyChat.fromJson(snapshot.data()![chatRoomId]);
+        chat.lastMessage = message.content;
+        _firestore
+            .collection('users')
+            .doc(id)
+            .update({chatRoomId: chat.toJson()});
+      }
+    } catch (e) {
+      if (e is FirebaseException && e.code == 'not-found') {
+        final chat = MyChat(
+            chatRoomId: chatRoomId,
+            otherEmail: chatRoomId.split('&')[0] == id
+                ? chatRoomId.split('&')[1]
+                : chatRoomId.split('&')[0],
+            otherName: chatRoomId.split('&')[0] == id
+                ? chatRoomId.split('&')[1]
+                : chatRoomId.split('&')[0],
+            otherPhotoUrl: '1',
+            lastMessage: message.content,
+            lastTime: message.createdAt);
+        _firestore.collection('users').doc(id).set({chatRoomId: chat.toJson()});
+      } else {
+        print(e);
+      }
     }
   }
 

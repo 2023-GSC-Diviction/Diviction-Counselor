@@ -108,13 +108,15 @@ class MyChat {
   String otherName;
   String otherPhotoUrl;
   String lastMessage;
+  String lastTime;
 
   MyChat(
       {required this.chatRoomId,
       required this.otherEmail,
       required this.otherName,
       required this.otherPhotoUrl,
-      required this.lastMessage});
+      required this.lastMessage,
+      required this.lastTime});
 
   factory MyChat.fromJson(Map<dynamic, dynamic> json) {
     return MyChat(
@@ -122,7 +124,8 @@ class MyChat {
         otherEmail: json['otherEmail'],
         otherName: json['otherName'],
         otherPhotoUrl: json['otherPhotoUrl'],
-        lastMessage: json['lastMessage']);
+        lastMessage: json['lastMessage'],
+        lastTime: json['lastTime']);
   }
   toJson() {
     return {
@@ -131,6 +134,7 @@ class MyChat {
       'otherName': otherName,
       'otherPhotoUrl': otherPhotoUrl,
       'lastMessage': lastMessage,
+      'lastTime': lastTime,
     };
   }
 
