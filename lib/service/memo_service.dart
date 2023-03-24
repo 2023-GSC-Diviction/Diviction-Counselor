@@ -71,30 +71,24 @@ class MemoService {
       if (result.result == Result.success) {
         return true;
       } else {
-        throw Exception('Failed to MemoSaved');
+        throw Exception('Failed to MemoUpdate');
       }
     } catch (e) {
-      throw Exception('Failed to MemoSaved');
+      throw Exception('Failed to MemoUpdate');
     }
   }
 
   Future memoDelete(Map<String, dynamic> data) async {
     try {
       NetWorkResult result = await DioClient().request(
-          'delete',
-          '$_baseUrl/memo/update/${data['memoId']}',
-          {
-            'title': null,
-            'content': data['content'],
-          },
-          false);
+          'delete', '$_baseUrl/memo/delete/${data['memoId']}', {}, false);
       if (result.result == Result.success) {
         return true;
       } else {
-        throw Exception('Failed to MemoSaved');
+        throw Exception('Failed to MemoDelete');
       }
     } catch (e) {
-      throw Exception('Failed to MemoSaved');
+      throw Exception('Failed to MemoDelete');
     }
   }
 }

@@ -60,6 +60,9 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
     setState(() {
       memoList.removeAt(index);
     });
+    ref
+        .read(memoProvider.notifier)
+        .memoDelete(memoList[index].toMap());
   }
 
   Future<void> _navigateAndEditMemo(BuildContext context, int index) async {
