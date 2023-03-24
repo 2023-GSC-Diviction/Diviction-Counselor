@@ -20,7 +20,7 @@ class MatchService {
   Future<List<dynamic>> getMatchList(int counselorId) async {
     try {
       NetWorkResult result = await DioClient().get(
-          '$_baseUrl/counselor/match/list/{id}?id=$counselorId', {}, false);
+          '$_baseUrl/counselor/match/list/$counselorId', {}, false);
       if (result.result == Result.success) {
         return result.response;
       } else {
@@ -47,48 +47,4 @@ class MatchService {
   //   }
   // }
 
-  Future<bool> signUp(Map<String, dynamic> counselor) async {
-    try {
-      NetWorkResult result = await DioClient()
-          .post('$_baseUrl/auth/signUp/conunselor', counselor, false);
-      if (result.result == Result.success) {
-        return true;
-      } else {
-        throw false;
-      }
-    } catch (e) {
-      throw false;
-    }
-  }
-
-  Future<bool> emailCheck(String email, String role) async {
-    try {
-      NetWorkResult result = await DioClient().get(
-          '$_baseUrl/auth/check/email/$email/role/$role',
-          {'email': email, 'role': role},
-          false);
-      if (result.result == Result.success) {
-        return result.response;
-      } else {
-        throw Exception('Failed to emailCheck');
-      }
-    } catch (e) {
-      throw Exception('Failed to emailCheck');
-    }
-  }
-
-  Future getCounselor(String email) async {
-    try {
-      NetWorkResult result = await DioClient()
-          .get('$_baseUrl/counselor/email/$email', {'user_email': email}, true);
-      if (result.result == Result.success) {
-        Counselor counselor = Counselor.fromJson(result.response);
-        counselor.savePreference(counselor);
-      } else {
-        throw Exception('Failed to getCounselor');
-      }
-    } catch (e) {
-      throw Exception('Failed to getCounselor');
-    }
-  }
 }

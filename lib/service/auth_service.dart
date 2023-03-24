@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:diviction_counselor/model/counselor.dart';
 import 'package:diviction_counselor/model/network_result.dart';
 import 'package:diviction_counselor/network/dio_client.dart';
+import 'package:diviction_counselor/service/chat_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as fss;
+import 'package:image_picker/image_picker.dart';
 import '../model/user.dart';
+import 'package:http/http.dart' as http;
 
 const storage = fss.FlutterSecureStorage();
 
@@ -63,17 +68,51 @@ class AuthService {
     }
   }
 
-  Future<bool> signUp(Map<String, dynamic> counselor) async {
+  // Future<bool> signUp(Map<String, dynamic> counselor) async {
+  //   try {
+  //     NetWorkResult result = await DioClient()
+  //         .post('$_baseUrl/auth/signUp/conunselor', counselor, false);
+  //     if (result.result == Result.success) {
+  //       return true;
+  //     } else {
+  //       throw false;
+  //     }
+  //   } catch (e) {
+  //     throw false;
+  //   }
+  // }
+
+  Future SignupWithloadImage({
+    required XFile file,
+    required Map<String, String> counselor,
+  }) async {
     try {
-      NetWorkResult result = await DioClient()
-          .post('$_baseUrl/auth/signUp/conunselor', counselor, false);
-      if (result.result == Result.success) {
+      final url = Uri.parse('$_baseUrl/auth/signUp/counselor');
+      final request = http.MultipartRequest('POST', url);
+      // 파일 업로드를 위한 http.MultipartRequest 생성
+      http.MultipartFile multipartFile =
+      await http.MultipartFile.fromPath('multipartFile', file.path);
+      request.headers.addAll(
+          {"Content-Type": "multipart/form-data"}); // request에 header 추가
+
+      // 이미지 파일을 http.MultipartFile로 변환하여 request에 추가
+      request.files.add(multipartFile);
+      request.fields.addAll(counselor); // request에 fields 추가
+
+      var streamedResponse = await request.send();
+      var result = await http.Response.fromStream(streamedResponse);
+      print(result.body);
+      if (result.statusCode == 200) {
+        Counselor counselor = Counselor.fromJson(json.decode(result.body));
+        counselor.savePreference(counselor);
+        ChatService();
         return true;
       } else {
-        throw false;
+        throw Exception('Failed to signUp');
       }
+      return false;
     } catch (e) {
-      throw false;
+      throw Exception('Failed to signUp');
     }
   }
 

@@ -10,46 +10,6 @@ class MatchListScreen extends ConsumerStatefulWidget {
   MatchListScreenState createState() => MatchListScreenState();
 }
 
-final data = [
-  {
-    "id": 1,
-    "email": "lin019@naver.com",
-    "name": "Name1",
-    "birth": "2003-03-16",
-    "address": "Address111111111111",
-    "gender": "FEMALE",
-    "profile_img_url":
-        "https://storage.cloud.google.com/diviction/user-profile/user-profile_user-basic-icon.jpg"
-  },
-  {
-    "id": 2,
-    "email": "test11@gmail.com",
-    "name": "Name2",
-    "birth": "1989-09-09",
-    "address": "Address222222222222",
-    "gender": "MALE",
-    "profile_img_url":"https://storage.cloud.google.com/diviction/user-profile/user-profile_user-basic-icon.jpg"
-  },
-  {
-    "id": 7,
-    "email": "user1@gmail.com",
-    "name": "Name3",
-    "birth": "2000-09-19",
-    "address": "Address333333333333",
-    "gender": "MALE",
-    "profile_img_url":"https://storage.cloud.google.com/diviction/user-profile/user-profile_user-basic-icon.jpg"
-  },
-  {
-    "id": 8,
-    "email": "user10@gmail.com",
-    "name": "Name4",
-    "birth": "1992-08-09",
-    "address": "Address444444444444",
-    "gender": "FEMALE",
-    "profile_img_url":"https://storage.cloud.google.com/diviction/user-profile/user-profile_user-basic-icon.jpg"
-  }
-];
-
 class MatchListScreenState extends ConsumerState<MatchListScreen> {
   @override
   void initState() {
@@ -61,7 +21,7 @@ class MatchListScreenState extends ConsumerState<MatchListScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>>(
-      future: MatchService().getMatchList(6), // MatchService().getMatchList(6)
+      future: MatchService().getMatchList(1), // MatchService().getMatchList(6)
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -78,12 +38,12 @@ class MatchListScreenState extends ConsumerState<MatchListScreen> {
                   child: ListView.builder(
                     itemCount: matches.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final person = data[index];
+                      final person = matches[index]['member'];
                       return ListTile(
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage('${person['profile_img_url']}'),
                         ),
-                        title: Text('${person['name']}, ${calculateAge(person['birth'] as String)} yo'),
+                        title: Text('${person['email']}, ${calculateAge(person['birth'] as String)} yo'),
                         subtitle: Text('${person['gender']}, ${person['address']}'),
                         onTap: () {
                           // 각 항목을 눌렀을 때 동작할 코드

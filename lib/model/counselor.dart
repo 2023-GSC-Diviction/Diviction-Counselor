@@ -9,7 +9,7 @@ class Counselor {
   String address;
   String gender;
   String? profile_img_url;
-  bool confirm;
+  bool? confirm;
 
   Counselor(
       {required this.id,
@@ -20,19 +20,20 @@ class Counselor {
       required this.birth,
       required this.gender,
       this.profile_img_url,
-      required this.confirm});
+      this.confirm});
 
   factory Counselor.fromJson(Map<String, dynamic> json) {
     return Counselor(
-        id: json['id'],
-        email: json['email'],
-        password: json['password'],
-        name: json['name'],
-        address: json['address'],
-        birth: json['birth'],
-        gender: json['gender'],
-        profile_img_url: json['profile_img_url'],
-        confirm: json['confirm']);
+      id: json['id'],
+      email: json['email'],
+      password: json['password'],
+      name: json['name'],
+      address: json['address'],
+      birth: json['birth'],
+      gender: json['gender'],
+      profile_img_url: json['profile_img_url'],
+      confirm: json['confirm'],
+    );
   }
 
   Map<String, dynamic> toJson() => {
@@ -58,6 +59,8 @@ class Counselor {
     counselor.profile_img_url == null
         ? prefs.setString('profileUrl', '')
         : prefs.setString('profileUrl', counselor.profile_img_url!);
-    prefs.setBool('confirm', counselor.confirm);
+    counselor.confirm == null
+      ? prefs.setBool('confirm', false)
+      : prefs.setBool('confirm', counselor.confirm!);
   }
 }

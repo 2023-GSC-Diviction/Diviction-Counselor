@@ -3,6 +3,7 @@ import 'package:diviction_counselor/service/auth_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/user.dart';
 
@@ -54,14 +55,28 @@ class AuthState extends StateNotifier<SignState> {
     }
   }
 
-  Future signUp(Map<String, dynamic> counselor) async {
+  // Future signUp(Map<String, dynamic> counselor) async {
+  //   try {
+  //     bool result = await AuthService().signUp(counselor);
+  //     if (result) {
+  //       print('회원가입 성공');
+  //       state = LoadState.success;
+  //     } else {
+  //       print('회원가입 실패');
+  //       state = LoadState.fail;
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     state = LoadState.fail;
+  //   }
+  // }
+
+  Future SignupWithloadImage(XFile file, Map<String, String> counselor) async {
     try {
-      bool result = await AuthService().signUp(counselor);
+      var result = await AuthService().SignupWithloadImage(file: file, counselor: counselor);
       if (result) {
-        print('회원가입 성공');
         state = SignState.success;
       } else {
-        print('회원가입 실패');
         state = SignState.fail;
       }
     } catch (e) {

@@ -29,10 +29,10 @@ class SignUpProfileScreen extends ConsumerStatefulWidget {
   }) : super(key: key);
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  SignUpProfileScreenState createState() => SignUpProfileScreenState();
 }
 
-class _ProfileScreenState extends ConsumerState<SignUpProfileScreen> {
+class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
   DateTime selectedDate = DateTime.now();
   DateTime defaultDate = DateTime(
       DateTime.now().year - 19, DateTime.now().month, DateTime.now().day);
@@ -40,6 +40,7 @@ class _ProfileScreenState extends ConsumerState<SignUpProfileScreen> {
   // 회원가입시 프로필 이미지의 path를 DB에 저장하고 프로필 탭에서 DB에 접근하여 사진 로딩하기.
   bool isChoosedPicture = false;
   String path = 'asset/image/DefaultProfileImage.png';
+  XFile? ImageFile;
 
   bool isGenderchoosed = false;
   String userGender = 'MALE';
@@ -158,9 +159,10 @@ class _ProfileScreenState extends ConsumerState<SignUpProfileScreen> {
       setState(() {
         this.isChoosedPicture = true;
         this.path = image.path;
+        this.ImageFile = image;
       });
     }
-    print(image);
+    // print(image);
   }
 
   onGenderChoosedMale() {
@@ -189,22 +191,25 @@ class _ProfileScreenState extends ConsumerState<SignUpProfileScreen> {
     print('성별 : ${userGender}');
     print('프로필 이미지 경로 : ${path}');
 
-    Map<String, dynamic> counselor = {
+    Map<String, String> counselor = {
       'email': widget.id,
       'password': widget.password,
-      'name': textEditingController_name.text,
+      'name': 'name', // textEditingControllerForName.text
+      'address': 'address', // textEditingControllerForAddress.text
       'birth': textEditingController_birth.text,
-      'address': textEditingController_address.text,
       'gneder': userGender,
-      'confirm': false,
+      // 'confirm': false,
     };
     try {
-      bool result = await AuthService().signUp(counselor);
-      if (result) {
-        ref.read(SignupProvider.notifier).state = SignupState.success;
-      } else {
-        ref.read(SignupProvider.notifier).state = SignupState.fail;
+      if(ImageFile != null) {
+        ref.read(authProvider.notifier).SignupWithloadImage(ImageFile!, counselor);
       }
+      // bool result = await AuthService().signUp(counselor);
+      // if (result) {
+      //   ref.read(SignupProvider.notifier).state = SignupState.success;
+      // } else {
+      //   ref.read(SignupProvider.notifier).state = SignupState.fail;
+      // }
     } catch (e) {
       ref.read(SignupProvider.notifier).state = SignupState.apifail;
     }

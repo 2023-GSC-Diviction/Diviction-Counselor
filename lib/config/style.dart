@@ -82,6 +82,8 @@ class TextStyles {
 }
 
 class Palette {
+  static const Color appColor = Color(0xFFBD6741C7);
+  static const Color appColor2 = Color.fromARGB(255, 255, 255, 255);
   static const Color mainTextColor = Color.fromRGBO(51, 51, 51, 1);
   static const Color chatGrayColor = Color.fromARGB(255, 224, 224, 230);
   static const Color borderColor = Color.fromARGB(255, 203, 203, 209);
@@ -98,3 +100,20 @@ Container dividingLine = Container(
     ),
   ),
 );
+
+/*
+0xFF63C9DB / Color.fromARGB(255, 99, 201, 219)과 비슷한 채도와 명암을 가지는 보라색 계열 색상
+0xFF5B84B1 -> DD
+0xFF7E8AA2
+0xFF5F5AA2
+0xFF9D7CBF
+0xFF7C5295
+----------
+0xFFC77DFF
+----------
+0xFF2EC4B6
+0xFF48B5A8
+---
+0xFF7F8B8C
+0xFF95A5A6
+ */

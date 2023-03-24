@@ -14,26 +14,24 @@ class ChatService {
     return _chatService;
   }
   ChatService._internal() {
-    // getUserId();
+    getUserEmail();
   }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<MyChat> userChatlist = [];
   late SharedPreferences prefs;
 
-  String user = '';
+  String userEmail = '';
 
-  // // 저장된 유저 가져오기**
-  // getUserId() async {
-  //   prefs = await SharedPreferences.getInstance();
-  //   user = prefs.getString('email')!.replaceAll('.', '');
-  // }
+  // 저장된 유저 가져오기**
+  getUserEmail() async {
+    prefs = await SharedPreferences.getInstance();
+    userEmail = prefs.getString('email')!.replaceAll('.', '');
+  }
 
   Future<List<MyChat>> getChatList() async {
-    prefs = await SharedPreferences.getInstance();
-    user = prefs.getString('email')!.replaceAll('.', '');
     try {
-      final snapshot = await _firestore.collection('users').doc(user).get();
+      final snapshot = await _firestore.collection('users').doc(userEmail).get();
       if (snapshot.exists) {
         final List<MyChat> chats = [];
         (snapshot.data() as Map)
@@ -51,11 +49,9 @@ class ChatService {
   }
 
   Stream<List<MyChat>> getChatListData() async* {
-    prefs = await SharedPreferences.getInstance();
-    user = prefs.getString('email')!.replaceAll('.', '');
     try {
       final data =
-          _firestore.collection('users').doc(user).snapshots().map((event) {
+          _firestore.collection('users').doc(userEmail).snapshots().map((event) {
         final List<MyChat> chats = [];
         (event.data() as Map)
             .entries
@@ -98,7 +94,7 @@ class ChatService {
             .update({'messages': messages.map((e) => e.toJson()).toList()});
       }
 
-      savaLastMessage(user, chatRoomId, message); //counselor
+      savaLastMessage(userEmail, chatRoomId, message); //counselor
       savaLastMessage(chatRoomId.split('&')[1], chatRoomId, message); // member
     } catch (e) {
       print(e);

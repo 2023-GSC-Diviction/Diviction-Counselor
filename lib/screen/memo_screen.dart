@@ -1,62 +1,62 @@
+import 'package:diviction_counselor/model/memo.dart';
+import 'package:diviction_counselor/provider/memoList_provider.dart';
+import 'package:diviction_counselor/provider/memo_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MemoScreen extends StatefulWidget {
+final memoProvider = StateNotifierProvider.autoDispose<MemoState, SaveState>(
+        (ref) => MemoState());
+final memoListProvider = StateNotifierProvider.autoDispose<MemoListProvider, List<Memo>>(
+        (ref) => MemoListProvider());
+
+class MemoScreen extends ConsumerStatefulWidget {
   const MemoScreen({Key? key}) : super(key: key);
 
   @override
   _MemoScreenState createState() => _MemoScreenState();
 }
 
-class _MemoScreenState extends State<MemoScreen> {
-  List<Map<String, dynamic>> memoList = [
-    {
-      'content':
-          '1111111111111111111111111111111111111111111111111111111111111111111',
-      'time': DateTime.parse('2022-03-22 04:51:50.251805')
-    },
-    {
-      'content': '222222222222222222222222222222222222',
-      'time': DateTime.parse('2023-01-22 04:51:52.865112')
-    },
-    {
-      'content': '3333333333333333333333333333333333333333333333333333',
-      'time': DateTime.parse('2023-02-22 04:51:55.541841')
-    },
-    {
-      'content':
-          '4444444444444444444444444444444444444444444444444444444444444444',
-      'time': DateTime.parse('2023-03-12 04:51:58.125609')
-    },
-    {
-      'content':
-          '5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555',
-      'time': DateTime.parse('2023-03-22 04:52:02.655365')
-    },
-    {
-      'content': '666666666666666666666666666666666',
-      'time': DateTime.parse('2023-03-22 02:52:02.655365')
-    },
-    {
-      'content': '777777777777777777777777777777777777',
-      'time': DateTime.parse('2023-03-22 02:52:02.655365')
-    },
-    {
-      'content': '8888888888888888888888888888888888',
-      'time': DateTime.parse('2023-03-22 04:22:02.655365')
-    },
-    {
-      'content': '99999999999999999999999999999',
-      'time': DateTime.parse('2020-03-22 04:22:02.655365')
-    },
-  ];
-
+class _MemoScreenState extends ConsumerState<MemoScreen> {
+  List<Memo> memoList = [];
   TextEditingController memoController = TextEditingController();
 
-  void addMemo(String content) {
-    setState(() {
-      memoList.add({'content': content, 'time': DateTime.now()});
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration(seconds: 1), () {
+      ref
+          .read(memoListProvider.notifier).getMemoList(1); // [test]
     });
-    print(memoList);
+  }
+
+  @override
+  void dispose() {
+    ref.read(memoListProvider.notifier).dispose();
+    super.dispose();
+  }
+
+  void addMemo(String content) {
+    Map<String, dynamic> data = {
+      'title': 'title1',
+      'matchId': 1,
+      'content': content,
+    };
+    ref
+        .read(memoProvider.notifier)
+        .memoSave(data);
+    setState(() {
+      Memo memo = Memo(
+        memoId : 11, // [test] 임시
+        title : 'title', // [test] 임시
+        content : content,
+        initDate : DateTime.now().toString(),
+        modiDate : DateTime.now().toString(),
+      );
+      memoList.add(memo);
+    });
+    // print(memoList);
   }
 
   void removeMemo(int index) {
@@ -70,23 +70,26 @@ class _MemoScreenState extends State<MemoScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => MemoEditScreen(
-          initialMemo: memoList[index]['content'],
-          date: memoList[index]['time'].toString().split(' ')[0],
+          initialMemo: memoList[index].content,
+          date: memoList[index].modiDate.toString().split(' ')[0],
         ),
       ),
     );
     if (newMemo != null) {
       setState(() {
-        memoList[index]['content'] = newMemo;
-        memoList[index]['time'] = DateTime.now();
+        memoList[index].content = newMemo;
+        memoList[index].modiDate = DateTime.now() as String;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final memoLists = ref.watch(memoListProvider);
+    print(memoLists.length);
+    memoList = memoLists;
     // 시간순 정렬 최근 게 가장 위로 오게함
-    memoList.sort((a, b) => b['time'].compareTo(a['time']));
+    memoList.sort((a, b) => b.modiDate.compareTo(a.modiDate));
 
     return Scaffold(
       resizeToAvoidBottomInset: true, // 추가
@@ -117,12 +120,12 @@ class _MemoScreenState extends State<MemoScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${memoList[index]['time'].toString().split(' ')[0]}',
+                                    '${memoList[index].initDate.toString().split(' ')[0]}',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    '(${formatTime(memoList[index]['time'])})',
+                                    '(last modified : ${formatTime(DateTime.parse(memoList[index].modiDate))})',
                                     style: TextStyle(color: Colors.grey),
                                   ),
                                 ],
@@ -130,7 +133,7 @@ class _MemoScreenState extends State<MemoScreen> {
                               ListTile(
                                 contentPadding:
                                     EdgeInsets.symmetric(horizontal: 0.0),
-                                title: Text(memoList[index]['content']),
+                                title: Text(memoList[index].content),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () => removeMemo(index),
@@ -264,3 +267,17 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
     );
   }
 }
+
+/*
+
+{
+      'content':
+          '1111111111111111111111111111111111111111111111111111111111111111111',
+      'time': DateTime.parse('2022-03-22 04:51:50.251805')
+    },
+    {
+      'content': '222222222222222222222222222222222222',
+      'time': DateTime.parse('2023-01-22 04:51:52.865112')
+    },
+
+ */
