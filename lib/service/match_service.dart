@@ -19,7 +19,8 @@ class MatchService {
 
   Future<List<dynamic>> getMatchList(int counselorId) async {
     try {
-      NetWorkResult result = await DioClient().get(
+      NetWorkResult result = await DioClient().request(
+          'get',
           '$_baseUrl/counselor/match/list/$counselorId', {}, false);
       if (result.result == Result.success) {
         return result.response;

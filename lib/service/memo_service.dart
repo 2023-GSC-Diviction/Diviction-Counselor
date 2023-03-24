@@ -23,7 +23,7 @@ class MemoService {
   Future memoSave(Map<String, dynamic> data) async {
     try {
       NetWorkResult result =
-          await DioClient().post('$_baseUrl/memo/save', data, false);
+          await DioClient().request('post', '$_baseUrl/memo/save', data, false);
       if (result.result == Result.success) {
         return true;
       } else {
@@ -36,8 +36,8 @@ class MemoService {
 
   Future<List<Memo>> getMemoLists(int matchId) async {
     try {
-      NetWorkResult response =
-          await DioClient().get('$_baseUrl/memo/get/$matchId', {}, false);
+      NetWorkResult response = await DioClient()
+          .request('get', '$_baseUrl/memo/get/$matchId', {}, false);
       if (response.result == Result.success) {
         var res = response.response;
         // print("res : $res");
@@ -60,11 +60,34 @@ class MemoService {
 
   Future memoUpdate(Map<String, dynamic> data) async {
     try {
-      NetWorkResult result =
-      await DioClient().put('$_baseUrl/memo/update/${data['memoId']}', {
-        'title': null,
-        'content': data['content'],
-      }, false);
+      NetWorkResult result = await DioClient().request(
+          'put',
+          '$_baseUrl/memo/update/${data['memoId']}',
+          {
+            'title': null,
+            'content': data['content'],
+          },
+          false);
+      if (result.result == Result.success) {
+        return true;
+      } else {
+        throw Exception('Failed to MemoSaved');
+      }
+    } catch (e) {
+      throw Exception('Failed to MemoSaved');
+    }
+  }
+
+  Future memoDelete(Map<String, dynamic> data) async {
+    try {
+      NetWorkResult result = await DioClient().request(
+          'delete',
+          '$_baseUrl/memo/update/${data['memoId']}',
+          {
+            'title': null,
+            'content': data['content'],
+          },
+          false);
       if (result.result == Result.success) {
         return true;
       } else {

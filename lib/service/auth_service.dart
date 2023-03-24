@@ -29,7 +29,8 @@ class AuthService {
       if (acToken == null && rfToken == null) {
         return false;
       } else {
-        NetWorkResult result = await DioClient().post(
+        NetWorkResult result = await DioClient().request(
+            'post',
             '$_baseUrl/auth/validate/token',
             {
               'accessToken': acToken,
@@ -50,7 +51,8 @@ class AuthService {
 
   Future<bool> signIn(String email, String password) async {
     try {
-      NetWorkResult result = await DioClient().post(
+      NetWorkResult result = await DioClient().request(
+          'post',
           '$_baseUrl/auth/signIn/counselor',
           {'email': email, 'password': password, 'authority': 'ROLE_COUNSELOR'},
           false);
@@ -91,7 +93,7 @@ class AuthService {
       final request = http.MultipartRequest('POST', url);
       // 파일 업로드를 위한 http.MultipartRequest 생성
       http.MultipartFile multipartFile =
-      await http.MultipartFile.fromPath('multipartFile', file.path);
+          await http.MultipartFile.fromPath('multipartFile', file.path);
       request.headers.addAll(
           {"Content-Type": "multipart/form-data"}); // request에 header 추가
 
@@ -118,7 +120,8 @@ class AuthService {
 
   Future<bool> emailCheck(String email, String role) async {
     try {
-      NetWorkResult result = await DioClient().get(
+      NetWorkResult result = await DioClient().request(
+          'get',
           '$_baseUrl/auth/check/email/$email/role/$role',
           {'email': email, 'role': role},
           false);
@@ -134,8 +137,8 @@ class AuthService {
 
   Future getCounselor(String email) async {
     try {
-      NetWorkResult result = await DioClient()
-          .get('$_baseUrl/counselor/email/$email', {'user_email': email}, true);
+      NetWorkResult result = await DioClient().request('get',
+          '$_baseUrl/counselor/email/$email', {'user_email': email}, true);
       if (result.result == Result.success) {
         Counselor counselor = Counselor.fromJson(result.response);
         counselor.savePreference(counselor);
