@@ -57,4 +57,21 @@ class MemoService {
       throw Exception('Error : Failed to load memolists, 에러메시지 : $e');
     }
   }
+
+  Future memoUpdate(Map<String, dynamic> data) async {
+    try {
+      NetWorkResult result =
+      await DioClient().put('$_baseUrl/memo/update/${data['memoId']}', {
+        'title': null,
+        'content': data['content'],
+      }, false);
+      if (result.result == Result.success) {
+        return true;
+      } else {
+        throw Exception('Failed to MemoSaved');
+      }
+    } catch (e) {
+      throw Exception('Failed to MemoSaved');
+    }
+  }
 }

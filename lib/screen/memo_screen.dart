@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final memoProvider = StateNotifierProvider.autoDispose<MemoState, SaveState>(
-        (ref) => MemoState());
-final memoListProvider = StateNotifierProvider.autoDispose<MemoListProvider, List<Memo>>(
+    (ref) => MemoState());
+final memoListProvider =
+    StateNotifierProvider.autoDispose<MemoListProvider, List<Memo>>(
         (ref) => MemoListProvider());
 
 class MemoScreen extends ConsumerStatefulWidget {
@@ -20,14 +21,12 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
   List<Memo> memoList = [];
   TextEditingController memoController = TextEditingController();
 
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Future.delayed(Duration(seconds: 1), () {
-      ref
-          .read(memoListProvider.notifier).getMemoList(1); // [test]
+      ref.read(memoListProvider.notifier).getMemoList(1); // [test]
     });
   }
 
@@ -43,16 +42,14 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
       'matchId': 1,
       'content': content,
     };
-    ref
-        .read(memoProvider.notifier)
-        .memoSave(data);
+    ref.read(memoProvider.notifier).memoSave(data);
     setState(() {
       Memo memo = Memo(
-        memoId : 11, // [test] 임시
-        title : 'title', // [test] 임시
-        content : content,
-        initDate : DateTime.now().toString(),
-        modiDate : DateTime.now().toString(),
+        memoId: 11, // [test] 임시
+        title: 'title', // [test] 임시
+        content: content,
+        initDate: DateTime.now().toString(),
+        modiDate: DateTime.now().toString(),
       );
       memoList.add(memo);
     });
@@ -66,20 +63,22 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
   }
 
   Future<void> _navigateAndEditMemo(BuildContext context, int index) async {
-    final newMemo = await Navigator.push(
+    final Memo? updatedMemo = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MemoEditScreen(
-          initialMemo: memoList[index].content,
-          date: memoList[index].modiDate.toString().split(' ')[0],
-        ),
+        builder: (context) => MemoEditScreen(memo: memoList[index]),
       ),
     );
-    if (newMemo != null) {
+    if (updatedMemo != null) {
       setState(() {
-        memoList[index].content = newMemo;
-        memoList[index].modiDate = DateTime.now() as String;
+        memoList[index] = updatedMemo;
       });
+      ref
+          .read(memoProvider.notifier)
+          .memoUpdate(updatedMemo.toMap());
+    }
+    else {
+      print('Error : updatedMemo is null');
     }
   }
 
@@ -198,13 +197,11 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
 }
 
 class MemoEditScreen extends StatefulWidget {
-  final String initialMemo;
-  final String date;
+  final Memo memo;
 
   const MemoEditScreen({
     Key? key,
-    required this.initialMemo,
-    required this.date,
+    required this.memo,
   }) : super(key: key);
 
   @override
@@ -217,7 +214,7 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
   @override
   void initState() {
     super.initState();
-    memoController = TextEditingController(text: widget.initialMemo);
+    memoController = TextEditingController(text: widget.memo.content);
   }
 
   @override
@@ -227,7 +224,13 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
   }
 
   void saveMemo() {
-    final newMemo = memoController.text;
+    final newMemo = Memo(
+      memoId: widget.memo.memoId,
+      title: widget.memo.title,
+      content: memoController.text,
+      initDate: widget.memo.initDate,
+      modiDate: DateTime.now().toString(),
+    );
     Navigator.pop(context, newMemo);
   }
 
@@ -258,7 +261,7 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
             ),
             const Divider(),
             Text(
-              'last modified date : ${widget.date}',
+              'last modified date : ${widget.memo.modiDate}',
               style: TextStyle(color: Colors.grey),
             ),
           ],
@@ -267,17 +270,3 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
     );
   }
 }
-
-/*
-
-{
-      'content':
-          '1111111111111111111111111111111111111111111111111111111111111111111',
-      'time': DateTime.parse('2022-03-22 04:51:50.251805')
-    },
-    {
-      'content': '222222222222222222222222222222222222',
-      'time': DateTime.parse('2023-01-22 04:51:52.865112')
-    },
-
- */

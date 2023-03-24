@@ -128,4 +128,51 @@ class DioClient {
       }
     }
   }
+
+  // memo update에 쓰임
+  Future<NetWorkResult> put(String url, dynamic data, bool useToken) async {
+    try {
+      print("요청한 url : ${url}");
+      _getToken();
+      Response response = await _dio.put(
+        url,
+        data: json.encode(data),
+        options: useToken
+            ? Options(
+          contentType: Headers.jsonContentType,
+          headers: {
+            HttpHeaders.authorizationHeader: 'Bearer $_acToken',
+            'RT':
+            _refToken, // 이거는 토큰이 만료되었을 때, 새로운 토큰을 받아오기 위해 필요한 헤더입니다.
+          },
+        )
+            : Options(contentType: Headers.jsonContentType),
+      );
+      if (response.statusCode == 200) {
+        print("${response.realUri} [200] 요청성공");
+        _checkToken(response.headers);
+        return NetWorkResult(result: Result.success, response: response.data);
+      } else if (response.statusCode == 401) {
+        if (response.headers.value('CODE') == 'RTE') {
+          print("${response.realUri} [401] 요청실패 RTE");
+          return NetWorkResult(result: Result.tokenExpired);
+        } else {
+          print("${response.realUri} [401] 요청실패 ETC");
+          return NetWorkResult(result: Result.fail);
+        }
+      } else {
+        print("${response.realUri} [500] 서버에서 처리가 안됌");
+        _checkToken(response.headers);
+        return NetWorkResult(result: Result.fail);
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        print('url : $url [DioError] : ${e.response}');
+        return NetWorkResult(result: Result.fail, response: e.response);
+      } else {
+        print('url : $url [DioError] : ${e.response}');
+        return NetWorkResult(result: Result.fail, response: e);
+      }
+    }
+  }
 }

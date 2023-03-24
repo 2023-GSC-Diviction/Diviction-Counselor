@@ -37,4 +37,23 @@ class MemoState extends StateNotifier<SaveState> {
       return false;
     }
   }
+
+  Future memoUpdate(Map<String, dynamic> data) async {
+    try {
+      var result = await MemoService().memoUpdate(data);
+      if (result) {
+        print('메모수정 성공');
+        state = SaveState.success;
+        return true;
+      } else {
+        print('메모수정 실패');
+        state = SaveState.fail;
+        return false;
+      }
+    } catch (e) {
+      print('메모수정 실패, $e');
+      state = SaveState.fail;
+      return false;
+    }
+  }
 }

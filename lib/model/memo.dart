@@ -22,4 +22,14 @@ class Memo {
       modiDate: json['modiDate'],
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'memoId': memoId,
+      'title': title,
+      'content': content,
+      'initDate': initDate,
+      'memoId': memoId,
+    };
+  }
 }
