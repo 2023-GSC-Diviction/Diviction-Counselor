@@ -1,5 +1,5 @@
 import 'package:diviction_counselor/config/style.dart';
-import 'package:diviction_counselor/service/match_service.dart';
+import 'package:diviction_counselor/service/matchList_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,7 +21,7 @@ class MatchListScreenState extends ConsumerState<MatchListScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>>(
-      future: MatchService().getMatchList(1), // MatchService().getMatchList(6)
+      future: MatchingService().getMatchList(1), // MatchService().getMatchList(6)
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());

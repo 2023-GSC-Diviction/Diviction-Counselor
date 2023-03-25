@@ -138,7 +138,7 @@ class MemberListScreenState extends ConsumerState<MemberListScreen> {
                 }
               },
               error: (e, st) =>
-                  Expanded(child: Center(child: Text('Error: $e'))),
+                  Expanded(child: Center(child: Text('Error: $e', style: TextStyle(fontSize: 25),))),
               loading: () => const Expanded(
                   child: Center(child: CircularProgressIndicator())))
         ],

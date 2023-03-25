@@ -13,10 +13,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 
+import '../widget/edit_profile_image.dart';
+
 enum SignupState { proceeding, success, fail, apifail }
 
 final SignupProvider =
     StateProvider<SignupState>((ref) => SignupState.proceeding);
+
+final imageProvider = StateProvider<String?>((ref) => null);
 
 class SignUpProfileScreen extends ConsumerStatefulWidget {
   final String id;
@@ -50,12 +54,22 @@ class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
   TextEditingController textEditingController_address = TextEditingController();
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    ref.invalidate(SignupProvider);
+    ref.invalidate(imageProvider);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final idCheckState = ref.watch(SignupProvider);
+    final isComplete = ref.watch(SignupProvider);
+    final userImage = ref.watch(imageProvider);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      switch (idCheckState) {
+      switch (isComplete) {
         case SignupState.success:
+          ref.invalidate(authProvider);
           showSnackbar('Sign up success');
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => LoginScreen()));
@@ -76,6 +90,7 @@ class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
@@ -88,10 +103,11 @@ class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
                 subContext: '',
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-              ProfileImage(
+              EditProfileImage(
                 onProfileImagePressed: onProfileImagePressed,
-                isChoosedPicture: isChoosedPicture,
-                path: path,
+                path: userImage,
+                type: 1,
+                imageSize: MediaQuery.of(context).size.height * 0.12,
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.05),
               _CustomInputField(
@@ -126,7 +142,7 @@ class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               CustomRoundButton(
                   title: 'Profile completed!',
-                  onPressed: onPressedSignupButton),
+                  onPressed: () => onPressedSignupButton(userImage)),
               SizedBox(height: MediaQuery.of(context).size.height * 0.10),
             ],
           ),
@@ -181,7 +197,7 @@ class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
     print(userGender);
   }
 
-  onPressedSignupButton() async {
+  onPressedSignupButton(String? image) async {
     print('프로필 완성 버튼 눌림');
     print('email : $widget.id');
     print('password : $widget.password');
@@ -201,8 +217,8 @@ class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
       // 'confirm': false,
     };
     try {
-      if(ImageFile != null) {
-        ref.read(authProvider.notifier).SignupWithloadImage(ImageFile!, counselor);
+      if(image != null) {
+        ref.read(authProvider.notifier).SignupWithloadImage(image, counselor);
       }
       // bool result = await AuthService().signUp(counselor);
       // if (result) {

@@ -71,9 +71,9 @@ class AuthState extends StateNotifier<SignState> {
   //   }
   // }
 
-  Future SignupWithloadImage(XFile file, Map<String, String> counselor) async {
+  Future SignupWithloadImage(String path, Map<String, String> counselor) async {
     try {
-      var result = await AuthService().SignupWithloadImage(file: file, counselor: counselor);
+      var result = await AuthService().SignupWithloadImage(path: path, counselor: counselor);
       if (result) {
         state = SignState.success;
       } else {

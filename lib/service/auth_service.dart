@@ -85,7 +85,7 @@ class AuthService {
   // }
 
   Future SignupWithloadImage({
-    required XFile file,
+    required String path,
     required Map<String, String> counselor,
   }) async {
     try {
@@ -93,7 +93,7 @@ class AuthService {
       final request = http.MultipartRequest('POST', url);
       // 파일 업로드를 위한 http.MultipartRequest 생성
       http.MultipartFile multipartFile =
-          await http.MultipartFile.fromPath('multipartFile', file.path);
+          await http.MultipartFile.fromPath('multipartFile', path);
       request.headers.addAll(
           {"Content-Type": "multipart/form-data"}); // request에 header 추가
 
@@ -135,13 +135,29 @@ class AuthService {
     }
   }
 
-  Future getCounselor(String email) async {
+  Future<User> getUser(String email) async {
+    try {
+      NetWorkResult result = await DioClient().request('get',
+          '$_baseUrl/member/get/email/$email', {'user_email': email}, true);
+      if (result.result == Result.success) {
+        User user = User.fromJson(result.response);
+        return user;
+      } else {
+        throw Exception('Failed to getUser');
+      }
+    } catch (e) {
+      throw Exception('Failed to getUser');
+    }
+  }
+
+  Future<Counselor> getCounselor(String email) async {
     try {
       NetWorkResult result = await DioClient().request('get',
           '$_baseUrl/counselor/email/$email', {'user_email': email}, true);
       if (result.result == Result.success) {
         Counselor counselor = Counselor.fromJson(result.response);
         counselor.savePreference(counselor);
+        return counselor;
       } else {
         throw Exception('Failed to getCounselor');
       }

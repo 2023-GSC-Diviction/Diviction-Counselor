@@ -28,6 +28,7 @@ class _MemoScreen2State extends State<MemoScreen2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('ㅇㅇㅇ환자 상담내용 정리'),
         centerTitle: true,

@@ -50,6 +50,7 @@ class ChatScreenState extends State<ChatScreen> {
           FocusScope.of(context).unfocus(); // 키보드 닫기 이벤트
         },
         child: Scaffold(
+            resizeToAvoidBottomInset: false,
             // appBar: const MyAppbar(
             //   isMain: false,
             //   hasBack: true,

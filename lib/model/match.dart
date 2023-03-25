@@ -1,15 +1,17 @@
-class Match {
-  int MatchId;
-  int counselorId;
-  String counselorEmail;
-  int patientId;
-  String patientEmail;
+import 'package:diviction_counselor/model/counselor.dart';
+import 'package:diviction_counselor/model/user.dart';
 
-  Match({
-    required this.MatchId,
-    required this.counselorId,
-    required this.counselorEmail,
-    required this.patientId,
-    required this.patientEmail,
-  });
+class Match {
+  final int matchId;
+  final Counselor counselor;
+  final User user;
+
+  Match({required this.matchId, required this.counselor, required this.user});
+
+  factory Match.fromJson(Map<String, dynamic> json) {
+    return Match(
+        matchId: json['matchId'],
+        counselor: Counselor.fromJson(json['counselor']),
+        user: User.fromJson(json['user']));
+  }
 }

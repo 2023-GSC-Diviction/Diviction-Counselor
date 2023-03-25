@@ -43,6 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       child: SafeArea(
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(top: 12),

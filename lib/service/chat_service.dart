@@ -14,7 +14,7 @@ class ChatService {
     return _chatService;
   }
   ChatService._internal() {
-    getUserEmail();
+    // getUserEmail();
   }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -27,9 +27,14 @@ class ChatService {
   getUserEmail() async {
     prefs = await SharedPreferences.getInstance();
     userEmail = prefs.getString('email')!.replaceAll('.', '');
+    print('userEmail : $userEmail');
   }
 
   Future<List<MyChat>> getChatList() async {
+    prefs = await SharedPreferences.getInstance();
+    userEmail = prefs.getString('email')!.replaceAll('.', '');
+    print('userEmail : $userEmail');
+
     try {
       final snapshot = await _firestore.collection('users').doc(userEmail).get();
       if (snapshot.exists) {
@@ -44,11 +49,14 @@ class ChatService {
         return [];
       }
     } catch (e) {
+      print("getChatList - error : $e");
       throw e;
     }
   }
 
   Stream<List<MyChat>> getChatListData() async* {
+    prefs = await SharedPreferences.getInstance();
+    userEmail = prefs.getString('email')!.replaceAll('.', '');
     try {
       final data =
           _firestore.collection('users').doc(userEmail).snapshots().map((event) {
@@ -62,6 +70,7 @@ class ChatService {
       });
       yield* data;
     } catch (e) {
+      print("getChatListData - error : $e");
       throw e;
     }
   }

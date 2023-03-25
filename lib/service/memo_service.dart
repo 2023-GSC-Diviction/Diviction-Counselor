@@ -44,9 +44,9 @@ class MemoService {
         List<Memo> memo = res
             .map(
               (memo) {
-                return Memo.fromJson(memo);
-              },
-            )
+            return Memo.fromJson(memo);
+          },
+        )
             .cast<Memo>()
             .toList();
         return memo;

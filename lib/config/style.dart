@@ -72,6 +72,12 @@ class TextStyles {
       fontWeight: FontWeight.w400);
   static const TextStyle descriptionTextStyle =
       TextStyle(color: Color.fromRGBO(153, 153, 153, 1), fontSize: 14);
+  static const TextStyle subTitmeTextStyle = TextStyle(
+      fontSize: 23,
+      color: Colors.white,
+      height: 1.4,
+      letterSpacing: 0.02,
+      fontWeight: FontWeight.w600);
 
   static const underlineTextStyle = TextStyle(
     color: Color(0xFFC3C3C3),

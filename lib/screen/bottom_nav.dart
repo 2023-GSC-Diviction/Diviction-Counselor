@@ -1,6 +1,8 @@
 import 'package:diviction_counselor/screen/bottom_navigation/ProfileTab/profile_screen.dart';
+import 'package:diviction_counselor/screen/home_screen.dart';
 import 'package:diviction_counselor/screen/matchlist_screen.dart';
 import 'package:diviction_counselor/screen/memo_screen.dart';
+import 'package:diviction_counselor/screen/profile/counselor_profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,8 +24,9 @@ class BottomNavigation extends ConsumerWidget {
     final currentPage = ref.watch(bottomNavProvider);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: [MatchListScreen(), MemberListScreen(), MemoScreen(),  ProfileScreen()]
+        child: [HomeScreen(), MatchListScreen(), MemoScreen(), CounselorProfileScreen()] // MemberListScreen
             .elementAt(currentPage),
       ),
       bottomNavigationBar: BottomNavigationBar(

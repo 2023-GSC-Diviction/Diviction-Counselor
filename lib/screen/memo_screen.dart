@@ -88,9 +88,9 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
   @override
   Widget build(BuildContext context) {
     final memoLists = ref.watch(memoListProvider);
-    print(memoLists.length);
+    print('memo_screen 실행됨');
     memoList = memoLists;
-    // 시간순 정렬 최근 게 가장 위로 오게함
+    // 시간순 정렬, 수정된 시간이 최근인게 가장 위로 오게함
     memoList.sort((a, b) => b.modiDate.compareTo(a.modiDate));
 
     return Scaffold(
@@ -240,6 +240,7 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Edit Memo'),
         actions: [

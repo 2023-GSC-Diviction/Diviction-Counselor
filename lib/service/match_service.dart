@@ -1,51 +1,66 @@
-import 'package:dio/dio.dart';
 import 'package:diviction_counselor/model/counselor.dart';
 import 'package:diviction_counselor/model/network_result.dart';
 import 'package:diviction_counselor/network/dio_client.dart';
+import 'package:diviction_counselor/service/auth_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart' as fss;
-import '../model/user.dart';
+import 'package:diviction_counselor/model/match.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-const storage = fss.FlutterSecureStorage();
-
-class MatchService {
-  static final MatchService _matchService = MatchService._internal();
-  factory MatchService() {
-    return _matchService;
+class MatchListService {
+  static final MatchListService _authService = MatchListService._internal();
+  factory MatchListService() {
+    return _authService;
   }
-  MatchService._internal();
+  MatchListService._internal();
 
   final String? _baseUrl = dotenv.env['BASE_URL'];
 
-  Future<List<dynamic>> getMatchList(int counselorId) async {
+  Future<bool> createMatch(int userId, int counselorId) async {
     try {
       NetWorkResult result = await DioClient().request(
-          'get',
-          '$_baseUrl/counselor/match/list/$counselorId', {}, false);
+          'post',
+          '$_baseUrl/match/save',
+          {
+            'patientId': userId,
+            'counselorId': counselorId,
+          },
+          true);
       if (result.result == Result.success) {
-        return result.response;
+        return true;
       } else {
-        throw Exception('Failed to getMatchList');
+        return false;
       }
     } catch (e) {
-      throw Exception('Failed to getMatchList');
+      return false;
     }
   }
 
-  // get 테스트용 정상 작동함
-  // Future<NetWorkResult> getMatchList() async {
-  //   try {
-  //     NetWorkResult result = await DioClient()
-  //         .get('$_baseUrl/audit/list/member/7', {}, false);
-  //     print(result.response);
-  //     if (result.result == Result.success) {
-  //       return NetWorkResult(result: Result.success, response: result.response);
-  //     } else {
-  //       return NetWorkResult(result: Result.fail);
-  //     }
-  //   } catch (e) {
-  //     return NetWorkResult(result: Result.fail, response: e);
-  //   }
-  // }
+  Future<Match?> getMatched() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final id = prefs.getInt('id');
+      if (id != null) {
+        NetWorkResult result = await DioClient()
+            .request('get', '$_baseUrl/member/match/$id', {'id': id}, true);
+        if (result.result == Result.success && result.response != null) {
+          Match match = Match.fromJson(result.response);
+          return match;
+        } else if (result.result == Result.success && result.response == null) {
+          return null;
+        } else {
+          throw Exception('Failed to getMatched');
+        }
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
 
+// Stream<List<Match>> getMatches() {
+//   return _matchCollection.snapshots().map((snapshot) {
+//     return snapshot.documents.map((doc) {
+//       return Match.fromJson(doc.data);
+//     }).toList();
+//   });
+// }
 }

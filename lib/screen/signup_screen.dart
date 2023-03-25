@@ -69,6 +69,7 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
           FocusScope.of(context).requestFocus(FocusNode());
         },
         child: Scaffold(
+            resizeToAvoidBottomInset: false,
             body: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
