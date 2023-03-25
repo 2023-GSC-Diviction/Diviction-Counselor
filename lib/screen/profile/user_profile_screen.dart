@@ -1,5 +1,8 @@
+import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:diviction_counselor/model/user.dart';
 import 'package:diviction_counselor/service/matchList_service.dart';
+import 'package:diviction_counselor/service/survey_service.dart';
+import 'package:diviction_counselor/widget/survey/survey_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +29,8 @@ class UserProfileScreen extends ConsumerStatefulWidget {
 
 class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
   bool isMatched = false;
+  late Map<String, List<Map<String, dynamic>>> datas;
+  late Future<Map<String, List<Map<String, dynamic>>>> futureData;
 
   List<UserProfileData> profileData = [
     UserProfileData(
@@ -33,22 +38,18 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
       answer:
           'Hello, I\'m James working at The Center for Health and Rehabilitation. This center provide Adult Addictive Diseases & Substance Abuse services.\nI hope our service helps you',
     ),
-    UserProfileData(title: 'Representative Service', answer: 'Substance Abuse'),
     UserProfileData(
         title: 'Activity Area', answer: 'Georgia, Atlanta, Fulton County, USA'),
     UserProfileData(
         title: 'Contact Hours',
         answer: 'Monday ~ Friday\n 9:00AM ~ 12:00PM, 1:00PM ~ 8:30PM'),
-    UserProfileData(
-        title: 'Contact',
-        answer:
-            "Web: http://www.fultoncountyga.gov/judicial-services-bh \nphone: 404-613-1650\nfax:404-332-0455")
   ];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    futureData = loadData();
     getMatchingData();
   }
 
@@ -56,6 +57,45 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     isMatched = sharedPreferences.getBool('isMatched') ?? false;
+  }
+
+  Future<Map<String, List<Map<String, dynamic>>>> loadData() async {
+    final List<Map<String, dynamic>> DASS_result =
+        await SurveyService().DASSdataGet();
+    final List<Map<String, dynamic>> DAST_result =
+        await SurveyService().DASTdataGet();
+    final List<Map<String, dynamic>> AUDIT_result =
+        await SurveyService().AUDITdataGet();
+    datas = {
+      'DASS': [],
+      'DAST': [],
+      'AUDIT': [],
+    };
+    setState(() {
+      DASS_result.forEach((data) {
+        datas['DASS']!.add({
+          'date': data['date'],
+          'melancholyScore': data['melancholyScore'],
+          'unrestScore': data['unrestScore'],
+          'stressScore': data['stressScore'],
+        });
+      });
+      DAST_result.forEach((data) {
+        Map<String, dynamic> surveyData = {
+          'date': data['date'],
+          'score': data['question'],
+        };
+        datas['DAST']!.add(surveyData);
+      });
+      AUDIT_result.forEach((data) {
+        Map<String, dynamic> surveyData = {
+          'date': data['date'],
+          'score': data['score'],
+        };
+        datas['AUDIT']!.add(surveyData);
+      });
+    });
+    return datas;
   }
 
   @override
@@ -176,6 +216,91 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
                               ))
                           .toList(),
                     ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          'Addiction self-diagnosis result',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          // color: Colors.white, // grey[100], Color(0x00FFFFFF)
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(width: 1, color: Colors.black12),
+                        ),
+                        padding: const EdgeInsets.all(8.0),
+                        width: MediaQuery.of(context).size.width,
+                        height: 360,
+                        child: FutureBuilder<
+                            Map<String, List<Map<String, dynamic>>>>(
+                          future: futureData,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              // 로딩 중일 때 표시할 UI
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasData) {
+                              // 데이터를 성공적으로 받아올 때 표시할 UI
+                              Map<String, List<Map<String, dynamic>>> data =
+                                  snapshot.data!;
+                              return ContainedTabBarView(
+                                tabBarProperties: TabBarProperties(
+                                  indicatorColor: Colors.blue,
+                                ),
+                                tabs: const [
+                                  Text('Psychological',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black)),
+                                  Text('Drug',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black)),
+                                  Text('Alcohol',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.black)),
+                                ],
+                                views: [
+                                  Survey_Chart(
+                                    data: data['DASS']!,
+                                    multiLine: true,
+                                    maxY: 42,
+                                  ),
+                                  Survey_Chart(
+                                    data: data['DAST']!,
+                                    multiLine: false,
+                                    maxY: 10,
+                                  ),
+                                  Survey_Chart(
+                                    data: data['DAST']!,
+                                    multiLine: false,
+                                    maxY: 40,
+                                  ), // AUDIT
+                                ],
+                                onChange: (index) => print(index),
+                              );
+                            } else if (snapshot.hasError) {
+                              // 에러가 발생했을 때 표시할 UI
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              // 아직 로딩 중이거나 데이터를 받아오지 못했을 때 표시할 UI
+                              return Center(child: Text('Data Load Error'));
+                            }
+                          },
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -225,7 +350,7 @@ class _HeaderState extends ConsumerState<_Header> {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                 Text(
-                  widget.user.address, // 이 정보는 회원가입 프로필 작성시에 받을 수 있게 추가해야 할 듯
+                  widget.user.email, // 이 정보는 회원가입 프로필 작성시에 받을 수 있게 추가해야 할 듯
                   style: const TextStyle(
                     fontSize: 17,
                     color: Colors.white54,
@@ -315,5 +440,46 @@ class ReviewCountTexts extends StatelessWidget {
             ),
           ],
         ));
+  }
+}
+
+class Survey_Chart extends StatefulWidget {
+  final List<Map<String, dynamic>> data;
+  final double maxY;
+  final bool multiLine;
+
+  const Survey_Chart({
+    Key? key,
+    required this.data,
+    required this.maxY,
+    required this.multiLine,
+  }) : super(key: key);
+
+  @override
+  State<Survey_Chart> createState() => _Survey_ChartState();
+}
+
+class _Survey_ChartState extends State<Survey_Chart> {
+  @override
+  Widget build(BuildContext context) {
+    // print('widget.data : ${widget.data.toString()}');
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // dividingLine,
+          Padding(
+            padding: const EdgeInsets.only(left: 3),
+            child: (widget.data != null && widget.data != [])
+                ? SurveyChart(
+                    list: widget.data,
+                    maxY: widget.maxY == null ? 1 : widget.maxY,
+                    multiLine: widget.multiLine)
+                : Center(child: CircularProgressIndicator()),
+          ),
+        ],
+      ),
+    );
   }
 }
