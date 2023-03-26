@@ -3,15 +3,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../config/style.dart';
 import '../model/chat.dart';
 import '../model/counselor.dart';
+import '../model/user.dart';
 import '../service/chat_service.dart';
 import '../widget/chat/messages.dart';
+import '../widget/profile_image.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key, required this.chatroomId});
+  const ChatScreen({super.key, required this.chatroomId, required this.user});
 
   final String chatroomId;
+  final User user;
 
   @override
   ChatScreenState createState() => ChatScreenState();
@@ -50,32 +54,100 @@ class ChatScreenState extends State<ChatScreen> {
           FocusScope.of(context).unfocus(); // 키보드 닫기 이벤트
         },
         child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            // appBar: const MyAppbar(
-            //   isMain: false,
-            //   hasBack: true,
-            //   hasDialog: false,
-            // ),
+            appBar: AppBar(
+              toolbarHeight: MediaQuery.of(context).size.height * 0.12,
+              backgroundColor: Color.fromARGB(255, 42, 42, 42),
+              title: GestureDetector(
+                // onTap: () => onProfilePressed(context, widget.counselor),
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          ProfileImage(
+                            onProfileImagePressed: () => {},
+                            // onProfilePressed(context, widget.counselor),
+                            isChoosedPicture: false,
+                            path: widget.user.profile_img_url,
+
+                            imageSize:
+                                MediaQuery.of(context).size.height * 0.07,
+                          ),
+                          const SizedBox(width: 20),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.45,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(widget.user.name,
+                                    style: const TextStyle(
+                                        color: Palette.appColor3,
+                                        fontSize: 23,
+                                        fontWeight: FontWeight.bold)),
+                                Text(widget.user.address,
+                                    style: const TextStyle(
+                                        color: Palette.appColor3,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400)),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: const [
+                          Icon(
+                            Icons.arrow_right,
+                            color: Palette.appColor,
+                          ),
+                          // Text('go to request',
+                          //     style: TextStyle(
+                          //         color: Colors.white,
+                          //         fontSize: 15,
+                          //         fontWeight: FontWeight.w400)),
+                        ],
+                      )
+                    ]),
+              ),
+              centerTitle: true,
+              elevation: 0,
+            ),
+            backgroundColor: Color.fromARGB(255, 42, 42, 42),
             extendBodyBehindAppBar: false,
-            body: Column(
+            body: Stack(
               children: [
-                Expanded(
-                    child: StreamBuilder(
-                  stream: ChatService().getChatRoomData(widget.chatroomId),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Messages(
-                          messages: snapshot.data!.messages.reversed.toList(),
-                          userId: userId, // 상담사 id
-                          memberName: snapshot.data!.user.name); // 중독자 이름
-                    } else {
-                      return const Center(
-                        child: Text('sendMessage'),
-                      );
-                    }
-                  },
-                )),
-                sendMesssage()
+                Container(
+                    decoration: const BoxDecoration(
+                      color: Palette.appColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30)),
+                    ),
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: StreamBuilder(
+                          stream:
+                              ChatService().getChatRoomData(widget.chatroomId),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Messages(
+                                  messages:
+                                      snapshot.data!.messages.reversed.toList(),
+                                  userId: userId,
+                                  memberName: snapshot.data!.user.name);
+                            } else {
+                              return const Center(
+                                child: Text('sendMessage'),
+                              );
+                            }
+                          },
+                        )),
+                        sendMesssage()
+                      ],
+                    ))
               ],
             )));
   }
@@ -86,7 +158,7 @@ class ChatScreenState extends State<ChatScreen> {
         boxShadow: [
           BoxShadow(color: Color.fromARGB(18, 0, 0, 0), blurRadius: 10)
         ],
-        color: const Color(0xffF4F4F5),
+        color: Palette.appColor,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(children: [
@@ -167,7 +239,7 @@ class ChatScreenState extends State<ChatScreen> {
           isChoosedPicture = true;
         });
         final message = Message(
-            content: '@image/${image.path}',
+            content: 'image@${image.path}',
             sender: userId,
             createdAt:
                 DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()));

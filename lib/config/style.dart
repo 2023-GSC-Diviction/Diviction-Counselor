@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class TextStyles {
+  static const TextStyle chatNicknameTextStyle =
+      TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600);
+  static const TextStyle chatNotMeBubbleTextStyle = TextStyle(
+      fontSize: 17,
+      color: Color.fromARGB(255, 255, 255, 255),
+      fontWeight: FontWeight.w400);
   static const TextStyle titleTextStyle = TextStyle(
       fontSize: 22,
       color: Color.fromRGBO(51, 51, 51, 1),
@@ -37,10 +43,21 @@ class TextStyles {
       letterSpacing: 0.04,
       fontSize: 14,
       color: Color.fromRGBO(255, 255, 255, 1));
-  static const TextStyle chatNicknameTextStyle =
-      TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600);
-  static const TextStyle chatNotMeBubbleTextStyle =
-      TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w400);
+  static const TextStyle chatHeading = TextStyle(
+    color: Palette.appColor4,
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 1.5,
+  );
+  static TextStyle chatbodyText = TextStyle(
+      color: Palette.appColor4.withOpacity(0.8),
+      fontSize: 14,
+      letterSpacing: 1.2,
+      fontWeight: FontWeight.w500);
+  static TextStyle chatTimeText = TextStyle(
+      color: Palette.appColor4.withOpacity(0.8),
+      fontSize: 11,
+      fontWeight: FontWeight.w500);
   static const TextStyle splashTitleTextStyle = TextStyle(
       decoration: TextDecoration.none,
       color: Colors.black54,
@@ -94,6 +111,8 @@ class Palette {
   static const Color chatGrayColor = Color.fromARGB(255, 224, 224, 230);
   static const Color borderColor = Color.fromARGB(255, 203, 203, 209);
   static const Color bottomBoxBorderColor = Color.fromARGB(10, 0, 0, 0);
+  static const Color appColor3 = Color.fromARGB(255, 255, 255, 255);
+  static const Color appColor4 = Color.fromARGB(255, 0, 0, 0);
 }
 
 Container dividingLine = Container(

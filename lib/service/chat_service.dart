@@ -36,7 +36,8 @@ class ChatService {
     print('userEmail : $userEmail');
 
     try {
-      final snapshot = await _firestore.collection('users').doc(userEmail).get();
+      final snapshot =
+          await _firestore.collection('users').doc(userEmail).get();
       if (snapshot.exists) {
         final List<MyChat> chats = [];
         (snapshot.data() as Map)
@@ -58,9 +59,13 @@ class ChatService {
     prefs = await SharedPreferences.getInstance();
     userEmail = prefs.getString('email')!.replaceAll('.', '');
     try {
-      final data =
-          _firestore.collection('users').doc(userEmail).snapshots().map((event) {
+      final data = _firestore
+          .collection('users')
+          .doc(userEmail)
+          .snapshots()
+          .map((event) {
         final List<MyChat> chats = [];
+        if (event.data() == null) return chats;
         (event.data() as Map)
             .entries
             .map((e) => chats.add(MyChat.fromJson(e.value)))
@@ -71,7 +76,7 @@ class ChatService {
       yield* data;
     } catch (e) {
       print("getChatListData - error : $e");
-      throw e;
+      if (e is FirebaseException && e.code == 'path.isNotEmpty') yield [];
     }
   }
 

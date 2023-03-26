@@ -219,11 +219,11 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
                     const SizedBox(height: 10),
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      child: Padding(
+                      child: const Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Text(
                           'Addiction self-diagnosis result',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,

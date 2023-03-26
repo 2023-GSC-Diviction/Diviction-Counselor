@@ -48,12 +48,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       switch (isLogin) {
         case SignState.success:
-        // Provider의 상태 변화를 다른 Consumer들이 반영
+          // Provider의 상태 변화를 다른 Consumer들이 반영
           ref.invalidate(authProvider);
           toMain();
           break;
         case SignState.fail:
           showSnackbar();
+          ref.refresh(authProvider);
           break;
         default:
       }

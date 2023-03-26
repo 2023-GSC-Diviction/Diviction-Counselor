@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class ProfileImage extends StatefulWidget {
   final onProfileImagePressed;
   final isChoosedPicture;
-  final path;
+  final String? path;
   final imageSize;
 
   const ProfileImage({
@@ -53,12 +53,14 @@ class _ProfileImageState extends State<ProfileImage> {
   }
 
   Widget choosedImage() {
-    return Image.file(
-      File(widget.path),
-      width: double.maxFinite,
-      height: double.maxFinite,
-      fit: BoxFit.fill,
-    );
+    return widget.path == null
+        ? defaultImage()
+        : Image.file(
+            File(widget.path!),
+            width: double.maxFinite,
+            height: double.maxFinite,
+            fit: BoxFit.fill,
+          );
   }
 
   Widget defaultImage() {

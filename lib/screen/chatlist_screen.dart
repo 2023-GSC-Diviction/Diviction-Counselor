@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/style.dart';
+import '../service/auth_service.dart';
 import '../service/chat_service.dart';
+import '../util/chat_time_format.dart';
 import 'chat_screen.dart';
 
-final chatProvider = FutureProvider((ref) => ChatService().getChatList());
+// final chatProvider = FutureProvider((ref) => ChatService().getChatList());
+final chatListProvider =
+    StreamProvider.autoDispose((ref) => ChatService().getChatListData());
 
 class MemberListScreen extends ConsumerStatefulWidget {
   const MemberListScreen({super.key});
@@ -33,7 +37,7 @@ class MemberListScreenState extends ConsumerState<MemberListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final chat = ref.watch(chatProvider);
+    final chat = ref.watch(chatListProvider);
 
     // return chat.when(data: (data) {
     //   if(data.isNotEmpty){
@@ -41,6 +45,7 @@ class MemberListScreenState extends ConsumerState<MemberListScreen> {
     //   }
     //   return
     // },)
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
@@ -53,96 +58,109 @@ class MemberListScreenState extends ConsumerState<MemberListScreen> {
                 if (data.isEmpty) {
                   return Center(child: Text('empty'));
                 } else {
-                  return Expanded(
-                      child: StreamBuilder(
-                          stream: ChatService().getChatListData(),
-                          builder: (context, snapshot) {
-                            return ListView.builder(
-                                itemBuilder: ((context, index) {
-                                  return Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        InkWell(
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ChatScreen(
-                                                            chatroomId: snapshot
-                                                                .data![index]
-                                                                .chatRoomId,
-                                                          )));
-                                            },
-                                            child: Container(
-                                              height: 70,
-                                              margin: const EdgeInsets.only(
-                                                  bottom: 20),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 50,
-                                                    height: 50,
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.grey,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50)),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                          snapshot.data![index]
-                                                              .otherName,
-                                                          style: TextStyles
-                                                              .chatNicknameTextStyle),
-                                                      const SizedBox(height: 5),
-                                                      Text(
-                                                          snapshot.data![index]
-                                                              .lastMessage,
-                                                          style: TextStyles
-                                                              .chatNotMeBubbleTextStyle)
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                            )),
-                                        GestureDetector(
-                                            onTap: () {},
-                                            child: Container(
-                                              width: 100,
-                                              height: 30,
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: const Center(
-                                                child: Text('accept',
-                                                    style: TextStyles
-                                                        .blueBottonTextStyle),
-                                              ),
-                                            ))
-                                      ]);
-                                }),
-                                itemCount: data.length);
-                          }));
+                  return Expanded(child: chatList(data)
+                      // StreamBuilder(
+                      //     stream: ChatService().getChatListData(),
+                      //     builder: (context, snapshot) {
+                      //       if (snapshot.data != null) {
+                      // return
+
+                      // } else {
+                      //   return Container(
+                      //     child: Text('No Chat'),
+                      //   );
+                      // }
+                      // }),
+                      );
                 }
               },
-              error: (e, st) =>
-                  Expanded(child: Center(child: Text('Error: $e', style: TextStyle(fontSize: 25),))),
+              error: (e, st) => Expanded(
+                      child: Center(
+                          child: Text(
+                    'Error: $e',
+                    style: TextStyle(fontSize: 25),
+                  ))),
               loading: () => const Expanded(
                   child: Center(child: CircularProgressIndicator())))
         ],
       ),
     );
+  }
+
+  onButtonPressed(String chatRoomId, String userEmail) async {
+    final user = await AuthService().getUser(userEmail);
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatScreen(
+                  chatroomId: chatRoomId,
+                  user: user,
+                )));
+  }
+
+  Widget chatList(List<MyChat> chats) {
+    return ListView.builder(
+        itemCount: chats.length,
+        shrinkWrap: false,
+        padding: const EdgeInsets.only(bottom: 40),
+        itemBuilder: (context, index) {
+          return InkWell(
+              onTap: () => onButtonPressed(
+                  chats[index].chatRoomId, chats[index].otherEmail),
+              child: Container(
+                  color: Colors.black,
+                  width: MediaQuery.of(context).size.width - 40,
+                  margin: const EdgeInsets.only(top: 20),
+                  child: Stack(children: [
+                    Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                              onTap: () => {
+                                    // onProfilePressed(
+                                    //     context,
+                                    //     chats!
+                                    //         .elementAt(
+                                    //             index)
+                                    //         .otherEmail),
+                                    // child: Container(
+                                    //   width: 50,
+                                    //   height: 50,
+                                    //   decoration: BoxDecoration(
+                                    //       color: Colors
+                                    //           .grey,
+                                    //       borderRadius:
+                                    //           BorderRadius.circular(
+                                    //               50)),
+                                    // ),
+                                  }),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(chats[index].otherName,
+                                  style: TextStyles.chatHeading),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(chats[index].lastMessage,
+                                  style: TextStyles.chatbodyText),
+                            ],
+                          ),
+                        ]),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Text(dataTimeFormat(chats[index].lastTime),
+                          style: TextStyles.chatTimeText),
+                    )
+                  ])));
+        });
   }
 }
