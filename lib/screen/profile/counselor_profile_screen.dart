@@ -210,7 +210,7 @@ class _HeaderState extends ConsumerState<_Header> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.15,
+                        height: MediaQuery.of(context).size.height * 0.18,
                         child: Column(
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -231,7 +231,7 @@ class _HeaderState extends ConsumerState<_Header> {
                             ]),
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.032),
+                          height: MediaQuery.of(context).size.height * 0.012),
                       Text(
                         data.name, // 이 정보는 회원가입 프로필 작성시에 받아옴. -> DB set -> 여기서 get
                         style: const TextStyle(

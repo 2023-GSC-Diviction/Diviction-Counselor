@@ -81,8 +81,13 @@ class _SurveyChartState extends State<SurveyChart> {
               top: 24,
               bottom: 12,
             ),
-            child: LineChart(
-              mainData(),
+            child: Column(
+              children: [
+                LineChart(
+                  mainData(),
+                ),
+                Image.asset('assets/image/Legend.png',)
+              ],
             ),
           ),
         ),

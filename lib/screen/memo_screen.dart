@@ -112,18 +112,19 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
                   height: MediaQuery.of(context).size.height - 250,
                   child: ListView.builder(
                     itemCount: memoList.length,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
-                        color: Palette.appColor2,
+                        color: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                           side: BorderSide(color: Colors.grey.shade300),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Expanded(
                                 child: InkWell(
@@ -140,12 +141,13 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
+                                        SizedBox(width: 5),
                                         Text(
                                           '(modified ${formatTime(DateTime.parse(memoList[index].modiDate))})',
                                           style: TextStyle(color: Colors.grey),
                                         ),
                                       ]),
-                                      SizedBox(height: 5),
+                                      SizedBox(height: 10),
                                       Text(memoList[index].content),
                                     ],
                                   ),
@@ -199,7 +201,7 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
     if (diff.inMinutes < 1) {
       return 'now';
     } else if (diff.inMinutes < 60) {
-      return '${diff.inMinutes} minutes ago';
+      return '${diff.inMinutes} minutes Sago';
     } else if (diff.inHours < 24) {
       return '${diff.inHours} hours ago';
     } else if (diff.inDays < 7) {

@@ -57,7 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           isMain: true,
           hasBack: false,
         ),
-        backgroundColor: Palette.appColor,
+        backgroundColor: Colors.white,
         body: Consumer(builder: (context, watch, _) {
           final MatchuserList = ref.watch(matchListProvider);
           return Column(
@@ -91,7 +91,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     style: TextStyles.subTitmeTextStyle,
                                   ),
                                   const SizedBox(height: 10),
-                                  _ReqiestUserList(user: user),
+                                  _ReqiestUserList(user: user, needAccept : false),
                                 ],
                               );
                             },
@@ -120,13 +120,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ListView.builder(
                         shrinkWrap: true,
                         itemCount: userList.when(
-                          data: (users) => 4, // users.length
+                          data: (users) => 2, // users.length
                           loading: () => 0,
                           error: (error, stackTrace) => 0,
                         ),
                         itemBuilder: (context, index) {
                           return userList.when(
-                            data: (users) => _ReqiestUserList(user: users.sublist(1, users.length)[index]),
+                            data: (users) => _ReqiestUserList(user: users.sublist(1, users.length)[index], needAccept : true),
                             loading: () => const CircularProgressIndicator(),
                             error: (error, stackTrace) => Text('Error: $error'),
                           );
@@ -169,7 +169,7 @@ class _Header extends ConsumerWidget {
               text: 'Hello, ',
               style: const TextStyle(
                   fontSize: 20,
-                  color: Colors.white,
+                  color: Palette.appColor2,
                   letterSpacing: 0.02,
                   fontWeight: FontWeight.w400),
               children: <TextSpan>[
@@ -177,7 +177,7 @@ class _Header extends ConsumerWidget {
                   text: '\n$name!',
                   style: const TextStyle(
                       fontSize: 30,
-                      color: Colors.white,
+                      color: Palette.appColor2,
                       height: 1.4,
                       letterSpacing: 0.02,
                       fontWeight: FontWeight.w700),
@@ -203,9 +203,11 @@ class _ReqiestUserList extends ConsumerStatefulWidget {
   const _ReqiestUserList({
     Key? key,
     required this.user,
+    required this.needAccept,
   }) : super(key: key);
 
   final User user;
+  final bool needAccept;
 
   @override
   _ReqiestUserListState createState() => _ReqiestUserListState();
@@ -258,12 +260,16 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                         decoration: BoxDecoration(
                             color: Colors.grey,
                             borderRadius: BorderRadius.circular(50)),
-                        child: CachedNetworkImage(
-                          imageUrl: widget.user.profile_img_url!,
-                          placeholder: (context, url) =>
-                              CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              Image.asset('assets/icons/user_icon.png'),
+                        child: ClipOval(
+                          child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: widget.user.profile_img_url!,
+
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                Image.asset('assets/icons/user_icon.png'),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -276,10 +282,10 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                             Text(
                                 '${widget.user.name}, ${calculateAge(widget.user.birth)} years old',
                                 style: TextStyles.chatNicknameTextStyle
-                                    .copyWith(fontSize: 16)),
-                            Text('${widget.user.gender}, ${widget.user.email}',
+                                    .copyWith(fontSize: 15)),
+                            Text('${widget.user.gender}',
                                 style: TextStyles.chatNotMeBubbleTextStyle
-                                    .copyWith(fontSize: 16))
+                                    .copyWith(fontSize: 12, color: Colors.grey[600]))
                           ],
                         ),
                       )
@@ -288,10 +294,11 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                 ),
               ),
             ),
+            widget.needAccept ?
             GestureDetector(
               onTap: () {},
               child: Container(
-                width: 80,
+                width: 70,
                 height: 30,
                 decoration: BoxDecoration(
                   color: Palette.appColor,
@@ -301,7 +308,7 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                   child: Text('accept', style: TextStyles.blueBottonTextStyle),
                 ),
               ),
-            )
+            ) : Container()
           ],
         ),
       ),

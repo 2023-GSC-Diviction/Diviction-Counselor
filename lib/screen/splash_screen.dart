@@ -36,7 +36,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (!isMounted || isLogin.value == null) return;
       if (isLogin.value!) {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const BottomNavigation()));
+            builder: (context) => const BottomNavigation())); // BottomNavigation()
       } else {
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => const LoginScreen()));

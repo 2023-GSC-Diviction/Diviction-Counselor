@@ -1,3 +1,4 @@
+import 'package:diviction_counselor/config/style.dart';
 import 'package:diviction_counselor/widget/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -38,12 +39,12 @@ class MyAppbar extends StatelessWidget with PreferredSizeWidget {
       title: Center(
           child: Text(
             title ?? 'Diviction',
-            style: TextStyle(color: Colors.white, fontSize: 20),
+            style: TextStyle(color: Palette.appColor2, fontSize: 20),
           )),
       actions: isMain
           ? [
         IconButton(
-          icon: const Icon(Icons.notifications, color: Colors.white),
+          icon: const Icon(Icons.notifications, color: Palette.appColor),
           onPressed: () {},
         ),
       ]

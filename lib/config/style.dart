@@ -73,8 +73,8 @@ class TextStyles {
   static const TextStyle descriptionTextStyle =
       TextStyle(color: Color.fromRGBO(153, 153, 153, 1), fontSize: 14);
   static const TextStyle subTitmeTextStyle = TextStyle(
-      fontSize: 23,
-      color: Colors.white,
+      fontSize: 25,
+      color: Palette.appColor2,
       height: 1.4,
       letterSpacing: 0.02,
       fontWeight: FontWeight.w600);
@@ -89,7 +89,7 @@ class TextStyles {
 
 class Palette {
   static const Color appColor = Color(0xFFBD6741C7);
-  static const Color appColor2 = Color.fromARGB(255, 255, 255, 255);
+  static const Color appColor2 = Colors.black;
   static const Color mainTextColor = Color.fromRGBO(51, 51, 51, 1);
   static const Color chatGrayColor = Color.fromARGB(255, 224, 224, 230);
   static const Color borderColor = Color.fromARGB(255, 203, 203, 209);
