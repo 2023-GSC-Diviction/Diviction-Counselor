@@ -46,8 +46,8 @@ List<String> title = [
   //'Question Answer' // Q&A에 대해서 질문 준비해야함(중독자, 상담자)
 ];
 
-class CounselorProfileScreenState extends ConsumerState<CounselorProfileScreen> {
-
+class CounselorProfileScreenState
+    extends ConsumerState<CounselorProfileScreen> {
   List<TextEditingController> textEditingController = [
     TextEditingController(),
     TextEditingController(),
@@ -94,13 +94,13 @@ class CounselorProfileScreenState extends ConsumerState<CounselorProfileScreen> 
       child: SafeArea(
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: Palette.appColor,
+          backgroundColor: Palette.appColor5,
           body: NestedScrollView(
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverAppBar(
-                    backgroundColor: Palette.appColor,
+                    backgroundColor: Palette.appColor5,
                     leading: null,
                     toolbarHeight: 0,
                     automaticallyImplyLeading: false,
@@ -109,8 +109,8 @@ class CounselorProfileScreenState extends ConsumerState<CounselorProfileScreen> 
                     pinned: true,
                     flexibleSpace: FlexibleSpaceBar(
                         background: _Header(
-                          textEditingController: textEditingController,
-                        ))),
+                      textEditingController: textEditingController,
+                    ))),
               ];
             },
             body: SingleChildScrollView(
@@ -119,7 +119,7 @@ class CounselorProfileScreenState extends ConsumerState<CounselorProfileScreen> 
                   Container(
                     height: MediaQuery.of(context).size.height,
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: Palette.appColor3,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30),
@@ -129,18 +129,19 @@ class CounselorProfileScreenState extends ConsumerState<CounselorProfileScreen> 
                     child: Column(
                       children: [
                         Column(
-                          children: List.generate(title.length, (index) => index)
-                              .map(
-                                (index) => IntrinsicHeight(
-                              child: CustomTextEditor(
-                                TitleContent: title[index],
-                                textEditingController:
-                                textEditingController[index],
-                                isreadOnly: !editMode,
-                              ),
-                            ),
-                          )
-                              .toList(),
+                          children:
+                              List.generate(title.length, (index) => index)
+                                  .map(
+                                    (index) => IntrinsicHeight(
+                                      child: CustomTextEditor(
+                                        TitleContent: title[index],
+                                        textEditingController:
+                                            textEditingController[index],
+                                        isreadOnly: !editMode,
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                         ),
                       ],
                     ),
@@ -221,11 +222,11 @@ class _HeaderState extends ConsumerState<_Header> {
                                 path: data.profile_img_url,
                                 // type: 1,
                                 imageSize:
-                                MediaQuery.of(context).size.height * 0.15,
+                                    MediaQuery.of(context).size.height * 0.15,
                               ),
                               Column(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: const [],
                               ),
                             ]),

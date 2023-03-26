@@ -113,6 +113,7 @@ class Palette {
   static const Color bottomBoxBorderColor = Color.fromARGB(10, 0, 0, 0);
   static const Color appColor3 = Color.fromARGB(255, 255, 255, 255);
   static const Color appColor4 = Color.fromARGB(255, 0, 0, 0);
+  static const Color appColor5 = Color.fromARGB(255, 42, 42, 42);
 }
 
 Container dividingLine = Container(

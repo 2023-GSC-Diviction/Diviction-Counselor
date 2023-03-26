@@ -106,7 +106,7 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
       },
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: Palette.appColor,
+          backgroundColor: Palette.appColor5,
           // floatingActionButton: isMatched
           //     ? FloatingActionButton.extended(
           //   onPressed: () async {
@@ -139,7 +139,7 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
                 (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
                 SliverAppBar(
-                    backgroundColor: Palette.appColor,
+                    backgroundColor: Palette.appColor5,
                     leading: IconButton(
                         icon: const Icon(Icons.arrow_back_ios_new),
                         onPressed: () => Navigator.pop(context)),
@@ -197,8 +197,8 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
                                       margin: const EdgeInsets.only(bottom: 8),
                                       width: MediaQuery.of(context).size.width,
                                       decoration: BoxDecoration(
-                                          color:
-                                              Palette.appColor.withOpacity(0.2),
+                                          color: Palette.appColor2
+                                              .withOpacity(0.1),
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       padding: EdgeInsets.all(20),
