@@ -1,3 +1,4 @@
+import 'package:diviction_counselor/model/user.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../model/chat.dart';
@@ -7,11 +8,11 @@ class Messages extends StatelessWidget {
   const Messages(
       {super.key,
       required this.messages,
-      required this.userId,
+      required this.user,
       required this.memberName});
 
   final List<Message> messages;
-  final String userId;
+  final User user;
   final String memberName;
 
   @override
@@ -22,8 +23,8 @@ class Messages extends StatelessWidget {
           reverse: true,
           itemCount: messages.length,
           itemBuilder: (context, index) {
-            return ChatBubbles(messages[index].content,
-                messages[index].sender == userId, memberName);
+            return ChatBubbles(
+                messages[index], messages[index].sender != user.email, user);
           },
         ));
   }
