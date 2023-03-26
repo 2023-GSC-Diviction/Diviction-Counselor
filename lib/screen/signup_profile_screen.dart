@@ -43,7 +43,7 @@ class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
 
   // 회원가입시 프로필 이미지의 path를 DB에 저장하고 프로필 탭에서 DB에 접근하여 사진 로딩하기.
   bool isChoosedPicture = false;
-  String path = 'asset/image/DefaultProfileImage.png';
+  String path = 'assets/image/DefaultProfileImage.png';
   XFile? ImageFile;
 
   bool isGenderchoosed = false;

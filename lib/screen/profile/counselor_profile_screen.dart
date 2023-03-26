@@ -180,7 +180,7 @@ class _HeaderState extends ConsumerState<_Header> {
   bool isChoosedPicture = false;
   // 수정권한 부여, 프로필 수정 페이지와 미리보기 페이지의 차이점이 없어서 스크린을 2개로 만들기가 애매합니다.
   // 로그인시 받아온 이메일 값과 해당 정보의 이메일 값을 비교해서 초기화 시키기
-  String path = 'asset/image/DefaultProfileImage.png';
+  String path = 'assets/image/DefaultProfileImage.png';
 
   @override
   Widget build(BuildContext context) {

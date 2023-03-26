@@ -40,7 +40,7 @@ class MatchingService {
       final id = prefs.getInt('id');
       if (id != null) {
         NetWorkResult result = await DioClient()
-            .request('get', '$_baseUrl/member/match/$id', {'id': id}, true);
+            .request('get', '$_baseUrl/counselor/match/list/$id', {}, false);
         if (result.result == Result.success && result.response != null) {
           Match match = Match.fromJson(result.response);
           return match;

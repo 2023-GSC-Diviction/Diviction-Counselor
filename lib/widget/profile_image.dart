@@ -45,7 +45,7 @@ class _ProfileImageState extends State<ProfileImage> {
           child: SizedBox(
             width: MediaQuery.of(context).size.height * 0.025,
             height: MediaQuery.of(context).size.height * 0.025,
-            child: Image.asset('asset/image/Pencil.png', fit: BoxFit.fill),
+            child: Image.asset('assets/image/Pencil.png', fit: BoxFit.fill),
           ),
         ),
       ]),
@@ -63,7 +63,7 @@ class _ProfileImageState extends State<ProfileImage> {
 
   Widget defaultImage() {
     return Image.asset(
-      'asset/image/DefaultProfileImage.png',
+      'assets/image/DefaultProfileImage.png',
       width: double.maxFinite,
       height: double.maxFinite,
       fit: BoxFit.fill,

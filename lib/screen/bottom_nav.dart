@@ -26,7 +26,7 @@ class BottomNavigation extends ConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: [HomeScreen(), MatchListScreen(), MemoScreen(), CounselorProfileScreen()] // MemberListScreen
+        child: [HomeScreen(), MemberListScreen(), MemoScreen(), CounselorProfileScreen()] //
             .elementAt(currentPage),
       ),
       bottomNavigationBar: BottomNavigationBar(
