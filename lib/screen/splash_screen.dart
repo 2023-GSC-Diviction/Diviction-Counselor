@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 final loginStateProvider =
-FutureProvider.autoDispose((ref) => AuthService().isLogin());
+    FutureProvider.autoDispose((ref) => AuthService().isLogin());
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -17,30 +17,41 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
-  bool isMounted = true;
-
   @override
   void dispose() {
-    isMounted = false;
-    ref.invalidate(loginStateProvider);
     super.dispose();
+    ref.invalidate(loginStateProvider);
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.read(authProvider.notifier).isLogin();
     final isLogin = ref.watch(loginStateProvider);
 
-    Future.delayed(const Duration(milliseconds: 2000), () async {
-      print('isLogin.value : ${isLogin.value}');
-      if (!isMounted || isLogin.value == null) return;
-      if (isLogin.value!) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const BottomNavigation())); // BottomNavigation()
-      } else {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
-      }
+    Future.delayed(const Duration(milliseconds: 1000), () async {
+      isLogin.when(
+        data: (value) {
+          if (value == true) {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const BottomNavigation())); //
+          } else if (value == false) {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const BottomNavigation())); //
+          } else {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const BottomNavigation())); //
+          }
+        },
+        loading: () {},
+        error: (error, stackTrace) {},
+      );
+      // print('isLogin.value : ${isLogin.value}');
+      // if (isLogin.value == null) return;
+      // if (isLogin.value!) {
+      // BottomNavigation()
+      // } else {
+      //   Navigator.of(context)
+      //       .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+      // }
     });
 
     return Container(

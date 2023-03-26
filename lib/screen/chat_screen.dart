@@ -100,7 +100,7 @@ class ChatScreenState extends State<ChatScreen> {
                         children: const [
                           Icon(
                             Icons.arrow_right,
-                            color: Palette.appColor,
+                            color: Palette.appColor3,
                           ),
                           // Text('go to request',
                           //     style: TextStyle(
@@ -120,7 +120,7 @@ class ChatScreenState extends State<ChatScreen> {
               children: [
                 Container(
                     decoration: const BoxDecoration(
-                      color: Palette.appColor,
+                      color: Palette.appColor3,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30)),
@@ -136,7 +136,7 @@ class ChatScreenState extends State<ChatScreen> {
                               return Messages(
                                   messages:
                                       snapshot.data!.messages.reversed.toList(),
-                                  userId: userId,
+                                  user: widget.user,
                                   memberName: snapshot.data!.user.name);
                             } else {
                               return const Center(
@@ -153,14 +153,14 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget sendMesssage() => Container(
-      height: sendBoxSize + 20,
-      decoration: const BoxDecoration(
+      height: MediaQuery.of(context).size.height * 0.08,
+      decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(color: Color.fromARGB(18, 0, 0, 0), blurRadius: 10)
         ],
-        color: Palette.appColor,
+        color: Palette.appColor4.withOpacity(0.03),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 10),
       child: Row(children: [
         IconButton(
           padding: EdgeInsets.zero,
@@ -242,7 +242,7 @@ class ChatScreenState extends State<ChatScreen> {
             content: 'image@${image.path}',
             sender: userId,
             createdAt:
-                DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()));
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()));
         ChatService().sendImage(widget.chatroomId, image, message);
       }
       print(image);
