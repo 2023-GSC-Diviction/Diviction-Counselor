@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 String dataTimeFormat(String lastMessageTime) {
   DateTime lastMessageTimeFormat =
-      DateFormat('yyyy-MM-dd hh:mm:ss').parse(lastMessageTime);
+      DateFormat('yyyy-MM-dd hh:MM:ss').parse(lastMessageTime);
 
   String result = '';
   DateTime now = DateTime.now();
