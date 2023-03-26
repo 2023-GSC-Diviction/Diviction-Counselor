@@ -228,7 +228,7 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
 
   @override
   Widget build(BuildContext context) {
-    print('widget.user.profile_img_url : ${widget.user.profile_img_url}');
+    // print('widget.user.profile_img_url : ${widget.user.profile_img_url}');
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),

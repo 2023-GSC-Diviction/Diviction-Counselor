@@ -243,7 +243,7 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
                         ),
                         padding: const EdgeInsets.all(8.0),
                         width: MediaQuery.of(context).size.width,
-                        height: 360,
+                        height: 400,
                         child: FutureBuilder<
                             Map<String, List<Map<String, dynamic>>>>(
                           future: futureData,
@@ -272,10 +272,19 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
                                           fontSize: 16, color: Colors.black)),
                                 ],
                                 views: [
-                                  Survey_Chart(
-                                    data: data['DASS']!,
-                                    multiLine: true,
-                                    maxY: 42,
+                                  Column(
+                                    children: [
+                                      Survey_Chart(
+                                        data: data['DASS']!,
+                                        multiLine: true,
+                                        maxY: 42,
+                                      ),
+                                      Image.asset(
+                                        width: 360,
+                                        height: 50,
+                                        'assets/image/Legend.png',
+                                      ),
+                                    ],
                                   ),
                                   Survey_Chart(
                                     data: data['DAST']!,
@@ -468,14 +477,14 @@ class _Survey_ChartState extends State<Survey_Chart> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // dividingLine,
           Padding(
             padding: const EdgeInsets.only(left: 3),
             child: (widget.data != null && widget.data != [])
                 ? SurveyChart(
                     list: widget.data,
                     maxY: widget.maxY == null ? 1 : widget.maxY,
-                    multiLine: widget.multiLine)
+                    multiLine: widget.multiLine,
+                  )
                 : Center(child: CircularProgressIndicator()),
           ),
         ],
