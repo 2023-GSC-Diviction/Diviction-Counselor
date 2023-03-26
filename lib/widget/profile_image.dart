@@ -32,22 +32,22 @@ class _ProfileImageState extends State<ProfileImage> {
             if (widget.isChoosedPicture)
               return ClipOval(child: choosedImage());
             else
-              return ClipOval(child: defaultImage());
+              return ClipOval(child: Image.asset('assets/icons/user_icon.png'));
           })(),
           // 이미지 크기는 iconSize에서 조절함
           iconSize:
               widget.imageSize ?? MediaQuery.of(context).size.height * 0.12,
         ),
-        Positioned(
-          // Positioned : 위치 정렬에 쓰임. 아래는 오른쪽 아래로 부터 0.01만큼 떨어지게 배치하라는 코드
-          right: MediaQuery.of(context).size.height * 0.01,
-          bottom: MediaQuery.of(context).size.height * 0.01,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.height * 0.025,
-            height: MediaQuery.of(context).size.height * 0.025,
-            child: Image.asset('assets/image/Pencil.png', fit: BoxFit.fill),
-          ),
-        ),
+        // Positioned(
+        //   // Positioned : 위치 정렬에 쓰임. 아래는 오른쪽 아래로 부터 0.01만큼 떨어지게 배치하라는 코드
+        //   right: MediaQuery.of(context).size.height * 0.01,
+        //   bottom: MediaQuery.of(context).size.height * 0.01,
+        //   child: SizedBox(
+        //     width: MediaQuery.of(context).size.height * 0.025,
+        //     height: MediaQuery.of(context).size.height * 0.025,
+        //     child: Image.asset('assets/image/Pencil.png', fit: BoxFit.fill),
+        //   ),
+        // ),
       ]),
     );
   }

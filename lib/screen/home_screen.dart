@@ -14,6 +14,16 @@ final matchListProvider = FutureProvider<List<dynamic>>((ref) async {
   return matches;
 });
 
+final userProvider = FutureProvider.autoDispose<List<User>>((ref) async {
+  // final isMatched = ref.watch(matchingProvider);
+  // if (isMatched) {
+  //   final user = await MatchingService().getMatched();
+  //   return [user!.user];
+  // } else {
+    return UserService().getUsers({});
+  // }
+});
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -39,56 +49,94 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userList = ref.watch(userProvider);
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: const MyAppbar(
           isMain: true,
           hasBack: false,
         ),
         backgroundColor: Palette.appColor,
-        resizeToAvoidBottomInset: false,
         body: Consumer(builder: (context, watch, _) {
-          final userList = ref.watch(matchListProvider);
-          return FutureBuilder<List<dynamic>>(
-            future: userList.when(
-              data: (matches) => Future.value(matches),
-              loading: () => Future.value([]),
-              error: (error, stackTrace) => Future.error(error),
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasData) {
-                return Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: Expanded(
-                    child: ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final user = User.fromJson(snapshot.data![index]['member']);
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _Header(name: name),
-                            const Text(
-                              'Request received',
-                              style: TextStyles.subTitmeTextStyle,
-                            ),
-                            const SizedBox(height: 10),
-                            _ReqiestUserList(user: user),
-                          ],
-                        );
-                      },
-                    ),
+          final MatchuserList = ref.watch(matchListProvider);
+          return Column(
+            children: [
+              Flexible(
+                child: FutureBuilder<List<dynamic>>(
+                  future: MatchuserList.when(
+                    data: (matches) => Future.value(matches),
+                    loading: () => Future.value([]),
+                    error: (error, stackTrace) => Future.error(error),
                   ),
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return const Text('No data');
-              }
-            },
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasData) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: Expanded(
+                          child: ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final user = User.fromJson(
+                                  snapshot.data![index]['member']);
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _Header(name: name),
+                                  const Text(
+                                    'MatchList',
+                                    style: TextStyles.subTitmeTextStyle,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _ReqiestUserList(user: user),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return const Text('No data');
+                    }
+                  },
+                ),
+              ),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Request received',
+                        style: TextStyles.subTitmeTextStyle,
+                      ),
+                      const SizedBox(height: 10),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: userList.when(
+                          data: (users) => 4, // users.length
+                          loading: () => 0,
+                          error: (error, stackTrace) => 0,
+                        ),
+                        itemBuilder: (context, index) {
+                          return userList.when(
+                            data: (users) => _ReqiestUserList(user: users.sublist(1, users.length)[index]),
+                            loading: () => const CircularProgressIndicator(),
+                            error: (error, stackTrace) => Text('Error: $error'),
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
           );
         }),
       ),
