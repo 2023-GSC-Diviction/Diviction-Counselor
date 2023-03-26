@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../config/style.dart';
 
 class CustomTextEditor extends StatefulWidget {
   final String TitleContent;
@@ -21,37 +22,45 @@ class CustomTextEditor extends StatefulWidget {
 class _CustomTextEditorState extends State<CustomTextEditor> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Text(
-                widget.TitleContent,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            width: MediaQuery.of(context).size.width,
+            child: Text(
+              widget.TitleContent,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
               ),
             ),
-            Expanded(
-              child: TextField(
-                maxLines: null,
-                readOnly: widget.isreadOnly,
-                controller: widget.textEditingController,
-                cursorColor: Colors.grey,
-                keyboardType: TextInputType.multiline,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  filled: true, // 이걸 true로 해야 색상을 넣어줄 수 있음
-                  fillColor: Colors.grey[100],
+          ),
+          Expanded(
+            child: TextField(
+              style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+              maxLines: null,
+              readOnly: widget.isreadOnly,
+              controller: widget.textEditingController,
+              cursorColor: Colors.grey,
+              keyboardType: TextInputType.multiline,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
                 ),
+                filled: true, // 이걸 true로 해야 색상을 넣어줄 수 있음
+                fillColor: Palette.appColor.withOpacity(0.2),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

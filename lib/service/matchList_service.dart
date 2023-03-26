@@ -54,21 +54,4 @@ class MatchingService {
       throw e;
     }
   }
-
-  // get 테스트용 정상 작동함
-  // Future<NetWorkResult> getMatchList() async {
-  //   try {
-  //     NetWorkResult result = await DioClient()
-  //         .get('$_baseUrl/audit/list/member/7', {}, false);
-  //     print(result.response);
-  //     if (result.result == Result.success) {
-  //       return NetWorkResult(result: Result.success, response: result.response);
-  //     } else {
-  //       return NetWorkResult(result: Result.fail);
-  //     }
-  //   } catch (e) {
-  //     return NetWorkResult(result: Result.fail, response: e);
-  //   }
-  // }
-
 }

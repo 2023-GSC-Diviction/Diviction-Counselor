@@ -35,7 +35,7 @@ class BottomNavigation extends ConsumerWidget {
           items: <BottomNavigationBarItem>[
             _BottomNavigationBarItems(Icons.home, 'Home', selected, unSelected),
             _BottomNavigationBarItems(Icons.chat, 'Counselor', selected, unSelected),
-            _BottomNavigationBarItems(Icons.chat, 'Counselor', selected, unSelected),
+            _BottomNavigationBarItems(Icons.chat, 'Memo', selected, unSelected),
             _BottomNavigationBarItems(Icons.account_circle_rounded, 'MyPage', selected, unSelected),
           ],
           currentIndex: currentPage,

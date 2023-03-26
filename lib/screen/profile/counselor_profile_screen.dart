@@ -13,32 +13,23 @@ import '../../widget/profile_image.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import '../../widget/survey/survey_chart.dart';
 
-
-final surdata = [
-  SurveyData(
-    date: '2021-08-01',
-    score: 30,
-  ),
-  SurveyData(
-    date: '2021-08-02',
-    score: 13,
-  ),
-  SurveyData(
-    date: '2021-08-06',
-    score: 22,
-  ),
-];
+// final surdata = [
+//   SurveyData(
+//     date: '2021-08-01',
+//     score: 30,
+//   ),
+//   SurveyData(
+//     date: '2021-08-02',
+//     score: 13,
+//   ),
+//   SurveyData(
+//     date: '2021-08-06',
+//     score: 22,
+//   ),
+// ];
 
 final editModeProvider = StateProvider((ref) => false);
 
-List<String> title = [
-  'Introduction',
-  'Activity Area',
-  'Contact Hours',
-  'Question Answer' // Q&A에 대해서 질문 준비해야함(중독자, 상담자)
-];
-
-@override
 class CounselorProfileScreen extends ConsumerStatefulWidget {
   const CounselorProfileScreen({Key? key}) : super(key: key);
 
@@ -46,14 +37,20 @@ class CounselorProfileScreen extends ConsumerStatefulWidget {
   CounselorProfileScreenState createState() => CounselorProfileScreenState();
 }
 
+List<String> title = [
+  'Introduction',
+  'Representative Service',
+  'Activity Area',
+  'Contact Hours',
+  'Contact',
+  //'Question Answer' // Q&A에 대해서 질문 준비해야함(중독자, 상담자)
+];
+
 class CounselorProfileScreenState extends ConsumerState<CounselorProfileScreen> {
-  List<String> title = [
-    'Introduction',
-    'Activity Area',
-    'Contact Hours',
-    // 'Question Answer' // Q&A에 대해서 질문 준비해야함(중독자, 상담자)
-  ];
+
   List<TextEditingController> textEditingController = [
+    TextEditingController(),
+    TextEditingController(),
     TextEditingController(),
     TextEditingController(),
     TextEditingController(),
@@ -208,6 +205,7 @@ class _HeaderState extends ConsumerState<_Header> {
                 //   });
                 // }
                 return Column(
+                    mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -279,7 +277,7 @@ class _HeaderState extends ConsumerState<_Header> {
     // 수정후 Done 버튼이 눌렸을 때 API Call을 통해서 내용 업데이트 해줘야 함
     if (ref.read(editModeProvider.notifier).state) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      for (var i in [0, 1, 2, 3]) {
+      for (var i in List.generate(title.length, (index) => index)) {
         prefs.setString(title[i], widget.textEditingController[i].text);
       }
       // API Call - 회원 프로필 업데이트

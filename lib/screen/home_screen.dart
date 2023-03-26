@@ -196,7 +196,7 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                             color: Colors.grey,
                             borderRadius: BorderRadius.circular(50)),
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage('${widget.user.profile_img_url}'),
+                          backgroundImage: NetworkImage(widget.user.profile_img_url!),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -207,7 +207,7 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                '${widget.user.name}, ${calculateAge(widget.user.birth)} yo',
+                                '${widget.user.name}, ${calculateAge(widget.user.birth)} years old',
                                 style: TextStyles.chatNicknameTextStyle
                                     .copyWith(fontSize: 16)),
                             Text('${widget.user.gender}, ${widget.user.email}',

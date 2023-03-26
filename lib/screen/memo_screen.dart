@@ -1,3 +1,4 @@
+import 'package:diviction_counselor/config/style.dart';
 import 'package:diviction_counselor/model/memo.dart';
 import 'package:diviction_counselor/provider/memoList_provider.dart';
 import 'package:diviction_counselor/provider/memo_provider.dart';
@@ -23,16 +24,20 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 1), () {
-      ref.read(memoListProvider.notifier).getMemoList(1); // [test]
+    // Widget이 올바른 상태에서 MemoListProvider를 호출하기 위해 addListener를 사용합니다.
+    ref
+        .read(memoListProvider.notifier)
+        .addListener((state) {
+      if (!mounted) return;
+      setState(() {});
     });
+    ref.read(memoListProvider.notifier).getMemoList(1);
   }
 
   @override
   void dispose() {
-    ref.read(memoListProvider.notifier).dispose();
+    ref.invalidate(memoListProvider);
     super.dispose();
   }
 
@@ -60,9 +65,7 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
     setState(() {
       memoList.removeAt(index);
     });
-    ref
-        .read(memoProvider.notifier)
-        .memoDelete(memoList[index].toMap());
+    ref.read(memoProvider.notifier).memoDelete(memoList[index].toMap());
   }
 
   Future<void> _navigateAndEditMemo(BuildContext context, int index) async {
@@ -76,11 +79,8 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
       setState(() {
         memoList[index] = updatedMemo;
       });
-      ref
-          .read(memoProvider.notifier)
-          .memoUpdate(updatedMemo.toMap());
-    }
-    else {
+      ref.read(memoProvider.notifier).memoUpdate(updatedMemo.toMap());
+    } else {
       print('Error : updatedMemo is null');
     }
   }
@@ -88,91 +88,106 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
   @override
   Widget build(BuildContext context) {
     final memoLists = ref.watch(memoListProvider);
-    print('memo_screen 실행됨');
     memoList = memoLists;
     // 시간순 정렬, 수정된 시간이 최근인게 가장 위로 오게함
     memoList.sort((a, b) => b.modiDate.compareTo(a.modiDate));
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true, // 추가
-      appBar: AppBar(
-        title: const Text('Memo'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Column(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height - 250,
-                child: ListView.builder(
-                  itemCount: memoList.length,
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text('Patient Counseling Diary'),
+          centerTitle: true,
+          backgroundColor: Palette.appColor,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height - 250,
+                  child: ListView.builder(
+                    itemCount: memoList.length,
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        color: Palette.appColor2,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                           side: BorderSide(color: Colors.grey.shade300),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Column(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${memoList[index].initDate.toString().split(' ')[0]}',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    _navigateAndEditMemo(context, index);
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(children: [
+                                        Text(
+                                          '${memoList[index].initDate.toString().split(' ')[0]}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          '(modified ${formatTime(DateTime.parse(memoList[index].modiDate))})',
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ]),
+                                      SizedBox(height: 5),
+                                      Text(memoList[index].content),
+                                    ],
                                   ),
-                                  Text(
-                                    '(last modified : ${formatTime(DateTime.parse(memoList[index].modiDate))})',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ],
-                              ),
-                              ListTile(
-                                contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 0.0),
-                                title: Text(memoList[index].content),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () => removeMemo(index),
                                 ),
-                                onTap: () =>
-                                    _navigateAndEditMemo(context, index),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete_outline),
+                                onPressed: () => removeMemo(index),
+                                color: Palette.appColor,
                               ),
                             ],
                           ),
-                        ));
-                  },
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              const Divider(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: memoController,
-                        decoration: const InputDecoration(
-                          hintText: 'Write a memo',
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: memoController,
+                          decoration: const InputDecoration(
+                            hintText: 'Write a memo',
+                          ),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        addMemo(memoController.text);
-                        memoController.clear();
-                      },
-                    )
-                  ],
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          addMemo(memoController.text);
+                          memoController.clear();
+                        },
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -181,20 +196,16 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
 
   String formatTime(DateTime time) {
     Duration diff = DateTime.now().difference(time);
-    if (diff.inDays >= 365) {
-      return '${diff.inDays ~/ 365} years ago';
-    } else if (diff.inDays >= 30) {
-      return '${diff.inDays ~/ 30} months ago';
-    } else if (diff.inDays >= 7) {
-      return '${diff.inDays ~/ 7} weeks ago';
-    } else if (diff.inDays > 0) {
-      return '${diff.inDays} days ago';
-    } else if (diff.inHours > 0) {
-      return '${diff.inHours} hours ago';
-    } else if (diff.inMinutes > 0) {
-      return '${diff.inMinutes} minutes ago';
-    } else {
+    if (diff.inMinutes < 1) {
       return 'now';
+    } else if (diff.inMinutes < 60) {
+      return '${diff.inMinutes} minutes ago';
+    } else if (diff.inHours < 24) {
+      return '${diff.inHours} hours ago';
+    } else if (diff.inDays < 7) {
+      return '${diff.inDays} days ago';
+    } else {
+      return '${time.toString().split(' ')[0]}';
     }
   }
 }
@@ -243,6 +254,8 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Edit Memo'),
+        centerTitle: true,
+        backgroundColor: Palette.appColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
