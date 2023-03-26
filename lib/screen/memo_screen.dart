@@ -96,102 +96,148 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: const Text('Patient Counseling Diary'),
-          centerTitle: true,
-          backgroundColor: Palette.appColor,
-        ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height - 250,
-                  child: ListView.builder(
-                    itemCount: memoList.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        child: Padding(
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+                  child: Text(
+                    'Consult Memo',
+                    style: TextStyles.subTitmeTextStyle,
+                  ),
+                ),
+                ListView.builder(
+                  itemCount: memoList.length,
+                  // padding: const EdgeInsets.symmetric(horizontal: 16),
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      elevation: 0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 16),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    _navigateAndEditMemo(context, index);
-                                  },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(children: [
+                              horizontal: 16, vertical: 20),
+                          child: Column(children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () {
+                                      _navigateAndEditMemo(context, index);
+                                    },
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
                                         Text(
-                                          '${memoList[index].initDate.toString().split(' ')[0]}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                          ),
+                                          memoList[index].content,
+                                          style: const TextStyle(
+                                              fontSize: 14.5,
+                                              fontWeight: FontWeight.w600),
                                         ),
-                                        SizedBox(width: 5),
-                                        Text(
-                                          '(modified ${formatTime(DateTime.parse(memoList[index].modiDate))})',
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ]),
-                                      SizedBox(height: 10),
-                                      Text(memoList[index].content),
-                                    ],
+                                        const SizedBox(height: 10),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete_outline),
-                                onPressed: () => removeMemo(index),
-                                color: Palette.appColor,
-                              ),
-                            ],
+                                Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: Palette.appColor5,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: const EdgeInsets.all(0),
+                                  margin: const EdgeInsets.only(left: 15),
+                                  child: IconButton(
+                                    padding: const EdgeInsets.all(0),
+                                    icon: const Icon(Icons.delete_outline),
+                                    onPressed: () => removeMemo(index),
+                                    color: Palette.appColor3,
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    memoList[index]
+                                        .initDate
+                                        .toString()
+                                        .split(' ')[0],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    '(modified ${formatTime(DateTime.parse(memoList[index].modiDate))})',
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ]),
+                          ])),
+                    );
+                  },
+                ),
+                Card(
+                  elevation: 0,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 15),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: memoController,
+                            decoration: const InputDecoration(
+                              hintText: 'Write a memo',
+                            ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: memoController,
-                          decoration: const InputDecoration(
-                            hintText: 'Write a memo',
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Palette.appColor5,
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          addMemo(memoController.text);
-                          memoController.clear();
-                        },
-                      )
-                    ],
+                          padding: const EdgeInsets.all(0),
+                          margin: const EdgeInsets.only(left: 15),
+                          child: IconButton(
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              addMemo(memoController.text);
+                              memoController.clear();
+                            },
+                            color: Palette.appColor3,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
+                )
               ],
             ),
           ),
@@ -211,7 +257,7 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
     } else if (diff.inDays < 7) {
       return '${diff.inDays} days ago';
     } else {
-      return '${time.toString().split(' ')[0]}';
+      return time.toString().split(' ')[0];
     }
   }
 }
@@ -259,9 +305,10 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Edit Memo'),
+        title:
+            const Text('Edit Memo', style: TextStyle(color: Palette.appColor4)),
         centerTitle: true,
-        backgroundColor: Palette.appColor,
+        backgroundColor: Palette.appColor3,
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -270,19 +317,25 @@ class _MemoEditScreenState extends State<MemoEditScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            TextField(
-              controller: memoController,
-              maxLines: null,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Edit the memo',
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: TextField(
+                controller: memoController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  suffixIcon: Icon(
+                    Icons.edit,
+                  ),
+                  // border: InputBorder.none,
+                  hintText: 'Edit the memo',
+                ),
               ),
             ),
-            const Divider(),
+            // const Divider(),
             Text(
               'last modified date : ${widget.memo.modiDate}',
               style: TextStyle(color: Colors.grey),
