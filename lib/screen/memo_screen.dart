@@ -26,9 +26,7 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
   void initState() {
     super.initState();
     // Widget이 올바른 상태에서 MemoListProvider를 호출하기 위해 addListener를 사용합니다.
-    ref
-        .read(memoListProvider.notifier)
-        .addListener((state) {
+    ref.read(memoListProvider.notifier).addListener((state) {
       if (!mounted) return;
       setState(() {});
     });
@@ -122,7 +120,8 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
                           side: BorderSide(color: Colors.grey.shade300),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 16),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -139,12 +138,17 @@ class _MemoScreenState extends ConsumerState<MemoScreen> {
                                         Text(
                                           '${memoList[index].initDate.toString().split(' ')[0]}',
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
                                         ),
                                         SizedBox(width: 5),
                                         Text(
                                           '(modified ${formatTime(DateTime.parse(memoList[index].modiDate))})',
-                                          style: TextStyle(color: Colors.grey),
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 12,
+                                          ),
                                         ),
                                       ]),
                                       SizedBox(height: 10),

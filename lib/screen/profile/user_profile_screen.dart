@@ -243,7 +243,7 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
                         ),
                         padding: const EdgeInsets.all(8.0),
                         width: MediaQuery.of(context).size.width,
-                        height: 400,
+                        height: 500,
                         child: FutureBuilder<
                             Map<String, List<Map<String, dynamic>>>>(
                           future: futureData,
@@ -263,13 +263,13 @@ class CounselorProfileScreenState extends ConsumerState<UserProfileScreen> {
                                 tabs: const [
                                   Text('Psychological',
                                       style: TextStyle(
-                                          fontSize: 16, color: Colors.black)),
+                                          fontSize: 14, color: Colors.black)),
                                   Text('Drug',
                                       style: TextStyle(
-                                          fontSize: 16, color: Colors.black)),
+                                          fontSize: 14, color: Colors.black)),
                                   Text('Alcohol',
                                       style: TextStyle(
-                                          fontSize: 16, color: Colors.black)),
+                                          fontSize: 14, color: Colors.black)),
                                 ],
                                 views: [
                                   Column(
