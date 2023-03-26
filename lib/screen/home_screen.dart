@@ -20,7 +20,7 @@ final userProvider = FutureProvider.autoDispose<List<User>>((ref) async {
   //   final user = await MatchingService().getMatched();
   //   return [user!.user];
   // } else {
-    return UserService().getUsers({});
+  return UserService().getUsers({});
   // }
 });
 
@@ -60,24 +60,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: Colors.white,
         body: Consumer(builder: (context, watch, _) {
           final MatchuserList = ref.watch(matchListProvider);
-          return Column(
+          return SingleChildScrollView(
+              child: Column(
             children: [
-              Flexible(
-                child: FutureBuilder<List<dynamic>>(
-                  future: MatchuserList.when(
-                    data: (matches) => Future.value(matches),
-                    loading: () => Future.value([]),
-                    error: (error, stackTrace) => Future.error(error),
-                  ),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasData) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Expanded(
+              Container(
+                  height: 270,
+                  child: FutureBuilder<List<dynamic>>(
+                    future: MatchuserList.when(
+                      data: (matches) => Future.value(matches),
+                      loading: () => Future.value([]),
+                      error: (error, stackTrace) => Future.error(error),
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasData) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
                           child: ListView.builder(
+                            shrinkWrap: true,
                             itemCount: snapshot.data!.length,
                             itemBuilder: (BuildContext context, int index) {
                               final user = User.fromJson(
@@ -91,53 +93,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     style: TextStyles.subTitmeTextStyle,
                                   ),
                                   const SizedBox(height: 10),
-                                  _ReqiestUserList(user: user, needAccept : false),
+                                  _ReqiestUserList(
+                                      user: user, needAccept: false),
                                 ],
                               );
                             },
                           ),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return const Text('No data');
-                    }
-                  },
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return const Text('No data');
+                      }
+                    },
+                  )),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Request received',
+                      style: TextStyles.subTitmeTextStyle,
+                    ),
+                    const SizedBox(height: 10),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: userList.when(
+                        data: (users) => 2, // users.length
+                        loading: () => 0,
+                        error: (error, stackTrace) => 0,
+                      ),
+                      itemBuilder: (context, index) {
+                        return userList.when(
+                          data: (users) => _ReqiestUserList(
+                              user: users.sublist(1, users.length)[index],
+                              needAccept: true),
+                          loading: () => const CircularProgressIndicator(),
+                          error: (error, stackTrace) => Text('Error: $error'),
+                        );
+                      },
+                    )
+                  ],
                 ),
               ),
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Request received',
-                        style: TextStyles.subTitmeTextStyle,
-                      ),
-                      const SizedBox(height: 10),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: userList.when(
-                          data: (users) => 2, // users.length
-                          loading: () => 0,
-                          error: (error, stackTrace) => 0,
-                        ),
-                        itemBuilder: (context, index) {
-                          return userList.when(
-                            data: (users) => _ReqiestUserList(user: users.sublist(1, users.length)[index], needAccept : true),
-                            loading: () => const CircularProgressIndicator(),
-                            error: (error, stackTrace) => Text('Error: $error'),
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              )
             ],
-          );
+          ));
         }),
       ),
     );
@@ -189,7 +190,7 @@ class _Header extends ConsumerWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       recordText(),
       const SizedBox(
-        height: 20,
+        height: 40,
       ),
       // const CheckListWidget(),
       // const SizedBox(
@@ -264,7 +265,6 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                           child: CachedNetworkImage(
                             fit: BoxFit.cover,
                             imageUrl: widget.user.profile_img_url!,
-
                             placeholder: (context, url) =>
                                 CircularProgressIndicator(),
                             errorWidget: (context, url, error) =>
@@ -285,7 +285,8 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                                     .copyWith(fontSize: 15)),
                             Text('${widget.user.gender}',
                                 style: TextStyles.chatNotMeBubbleTextStyle
-                                    .copyWith(fontSize: 12, color: Colors.grey[600]))
+                                    .copyWith(
+                                        fontSize: 12, color: Colors.grey[600]))
                           ],
                         ),
                       )
@@ -294,21 +295,23 @@ class _ReqiestUserListState extends ConsumerState<_ReqiestUserList> {
                 ),
               ),
             ),
-            widget.needAccept ?
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                width: 70,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: Palette.appColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Center(
-                  child: Text('accept', style: TextStyles.blueBottonTextStyle),
-                ),
-              ),
-            ) : Container()
+            widget.needAccept
+                ? GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 70,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: Palette.appColor4.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: const Center(
+                        child: Text('accept',
+                            style: TextStyles.blueBottonTextStyle),
+                      ),
+                    ),
+                  )
+                : Container()
           ],
         ),
       ),

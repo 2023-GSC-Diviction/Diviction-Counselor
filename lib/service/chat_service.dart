@@ -120,11 +120,29 @@ class ChatService {
       final snapshot = await _firestore.collection('users').doc(id).get();
       if (snapshot.exists) {
         final chat = MyChat.fromJson(snapshot.data()![chatRoomId]);
-        chat.lastMessage = message.content;
+        if (message.content.contains('image@')) {
+          chat.lastMessage = '사진';
+        } else {
+          chat.lastMessage = message.content;
+        }
+        chat.lastTime = message.createdAt;
         _firestore
             .collection('users')
             .doc(id)
             .update({chatRoomId: chat.toJson()});
+      } else {
+        final chat = MyChat(
+            chatRoomId: chatRoomId,
+            otherEmail: chatRoomId.split('&')[0] == id
+                ? chatRoomId.split('&')[1]
+                : chatRoomId.split('&')[0],
+            otherName: chatRoomId.split('&')[0] == id
+                ? chatRoomId.split('&')[1]
+                : chatRoomId.split('&')[0],
+            otherPhotoUrl: '1',
+            lastMessage: message.content,
+            lastTime: message.createdAt);
+        _firestore.collection('users').doc(id).set({chatRoomId: chat.toJson()});
       }
     } catch (e) {
       if (e is FirebaseException && e.code == 'not-found') {

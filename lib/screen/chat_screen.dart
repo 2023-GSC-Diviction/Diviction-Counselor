@@ -1,3 +1,4 @@
+import 'package:diviction_counselor/screen/memo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -76,7 +77,7 @@ class ChatScreenState extends State<ChatScreen> {
                           ),
                           const SizedBox(width: 20),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.45,
+                            width: MediaQuery.of(context).size.width * 0.3,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -95,19 +96,24 @@ class ChatScreenState extends State<ChatScreen> {
                           )
                         ],
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Icon(
-                            Icons.arrow_right,
-                            color: Palette.appColor3,
-                          ),
-                          // Text('go to request',
-                          //     style: TextStyle(
-                          //         color: Colors.white,
-                          //         fontSize: 15,
-                          //         fontWeight: FontWeight.w400)),
-                        ],
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MemoScreen()));
+                        },
+                        child: const Icon(
+                          Icons.post_add,
+                          color: Palette.appColor3,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: const Icon(
+                          Icons.face,
+                          color: Palette.appColor3,
+                        ),
                       )
                     ]),
               ),
@@ -219,7 +225,7 @@ class ChatScreenState extends State<ChatScreen> {
     final Message message = Message(
         content: newMessage,
         sender: userId,
-        createdAt: DateFormat('yyyy-MM-dd hh:mm:ss').format(DateTime.now()));
+        createdAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()));
 
     ChatService().sendMessage(
       widget.chatroomId,
