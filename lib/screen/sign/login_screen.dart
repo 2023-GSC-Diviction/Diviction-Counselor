@@ -3,7 +3,7 @@ import 'package:diviction_counselor/screen/bottom_nav.dart';
 import 'package:diviction_counselor/widget/title_header.dart';
 import 'package:diviction_counselor/model/network_result.dart';
 import 'package:diviction_counselor/network/dio_client.dart';
-import 'package:diviction_counselor/screen/signup_screen.dart';
+import 'package:diviction_counselor/screen/sign/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

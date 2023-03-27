@@ -55,8 +55,8 @@ class _ProfileImageState extends State<ProfileImage> {
   Widget choosedImage() {
     return widget.path == null
         ? defaultImage()
-        : Image.file(
-            File(widget.path!),
+        : Image.network(
+            widget.path!,
             width: double.maxFinite,
             height: double.maxFinite,
             fit: BoxFit.fill,

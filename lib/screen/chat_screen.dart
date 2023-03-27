@@ -1,3 +1,4 @@
+import 'package:diviction_counselor/screen/add_checklist_screen.dart';
 import 'package:diviction_counselor/screen/memo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -122,40 +123,53 @@ class ChatScreenState extends State<ChatScreen> {
             ),
             backgroundColor: Color.fromARGB(255, 42, 42, 42),
             extendBodyBehindAppBar: false,
-            body: Stack(
-              children: [
-                Container(
-                    decoration: const BoxDecoration(
-                      color: Palette.appColor3,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30)),
-                    ),
-                    child: Column(
-                      children: [
-                        Expanded(
-                            child: StreamBuilder(
-                          stream:
-                              ChatService().getChatRoomData(widget.chatroomId),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return Messages(
-                                  messages:
-                                      snapshot.data!.messages.reversed.toList(),
-                                  user: widget.user,
-                                  memberName: snapshot.data!.user.name);
-                            } else {
-                              return const Center(
-                                child: Text('sendMessage'),
-                              );
-                            }
-                          },
-                        )),
-                        sendMesssage()
-                      ],
-                    ))
-              ],
-            )));
+            body: Scaffold(
+                floatingActionButton: FloatingActionButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddChecklistScreen(
+                                    user: widget.user,
+                                  )));
+                    },
+                    child: Text('add checkList for ${widget.user.name}')),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerTop,
+                body: Stack(
+                  children: [
+                    Container(
+                        decoration: const BoxDecoration(
+                          color: Palette.appColor3,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30)),
+                        ),
+                        child: Column(
+                          children: [
+                            Expanded(
+                                child: StreamBuilder(
+                              stream: ChatService()
+                                  .getChatRoomData(widget.chatroomId),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return Messages(
+                                      messages: snapshot.data!.messages.reversed
+                                          .toList(),
+                                      user: widget.user,
+                                      memberName: snapshot.data!.user.name);
+                                } else {
+                                  return const Center(
+                                    child: Text('sendMessage'),
+                                  );
+                                }
+                              },
+                            )),
+                            sendMesssage()
+                          ],
+                        ))
+                  ],
+                ))));
   }
 
   Widget sendMesssage() => Container(

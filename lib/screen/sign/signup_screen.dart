@@ -1,7 +1,7 @@
 import 'package:diviction_counselor/config/style.dart';
 import 'package:diviction_counselor/service/auth_service.dart';
 import 'package:diviction_counselor/widget/custom_round_button.dart';
-import 'package:diviction_counselor/screen/signup_profile_screen.dart';
+import 'package:diviction_counselor/screen/sign/signup_profile_screen.dart';
 import 'package:diviction_counselor/widget/title_header.dart';
 import 'package:diviction_counselor/util/input_validate.dart';
 import 'package:flutter/material.dart';
@@ -29,14 +29,18 @@ class SignupScreenState extends ConsumerState<SignupScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    ref.read(idCheckProvider.notifier).state = EmailDuplicateState.proceeding; // 초기화
+    ref.read(idCheckProvider.notifier).state =
+        EmailDuplicateState.proceeding; // 초기화
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
-    ref.read(idCheckProvider.notifier).state = EmailDuplicateState.proceeding; // 초기화
+    ref.read(idCheckProvider.notifier).state =
+        EmailDuplicateState.proceeding; // 초기화
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final idCheckState = ref.watch(idCheckProvider);

@@ -6,14 +6,14 @@ import 'package:diviction_counselor/widget/profile_image.dart';
 import 'package:diviction_counselor/model/counselor.dart';
 import 'package:diviction_counselor/model/network_result.dart';
 import 'package:diviction_counselor/network/dio_client.dart';
-import 'package:diviction_counselor/screen/login_screen.dart';
+import 'package:diviction_counselor/screen/sign/login_screen.dart';
 import 'package:diviction_counselor/widget/title_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scroll_date_picker/scroll_date_picker.dart';
 
-import '../widget/edit_profile_image.dart';
+import '../../widget/edit_profile_image.dart';
 
 enum SignupState { proceeding, success, fail, apifail }
 
@@ -217,7 +217,7 @@ class SignUpProfileScreenState extends ConsumerState<SignUpProfileScreen> {
       // 'confirm': false,
     };
     try {
-      if(image != null) {
+      if (image != null) {
         ref.read(authProvider.notifier).SignupWithloadImage(image, counselor);
       }
       // bool result = await AuthService().signUp(counselor);

@@ -117,22 +117,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       style: TextStyles.subTitmeTextStyle,
                     ),
                     const SizedBox(height: 10),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: userList.when(
-                        data: (users) => 2, // users.length
-                        loading: () => 0,
-                        error: (error, stackTrace) => 0,
-                      ),
-                      itemBuilder: (context, index) {
-                        return userList.when(
-                          data: (users) => _ReqiestUserList(
-                              user: users.sublist(1, users.length)[index],
-                              needAccept: true),
-                          loading: () => const CircularProgressIndicator(),
-                          error: (error, stackTrace) => Text('Error: $error'),
-                        );
+                    userList.when(
+                      data: (users) {
+                        if (users.isEmpty) {
+                          return const Text('No request received');
+                        } else {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: users.length,
+                            itemBuilder: (context, index) {
+                              return _ReqiestUserList(
+                                  user: users[index], needAccept: true);
+                            },
+                          );
+                        }
                       },
+                      error: (error, stackTrace) => Text('Error: $error'),
+                      loading: () => const CircularProgressIndicator(),
                     )
                   ],
                 ),

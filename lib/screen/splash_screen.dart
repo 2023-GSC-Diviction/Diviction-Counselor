@@ -1,5 +1,5 @@
 import 'package:diviction_counselor/config/style.dart';
-import 'package:diviction_counselor/screen/login_screen.dart';
+import 'package:diviction_counselor/screen/sign/login_screen.dart';
 import 'package:diviction_counselor/screen/bottom_nav.dart';
 import 'package:diviction_counselor/service/auth_service.dart';
 import 'package:flutter/material.dart';
